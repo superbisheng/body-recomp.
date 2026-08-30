@@ -260,17 +260,30 @@ footer{padding:18px 20px 4px;font-family:var(--mono);font-size:10px;color:var(--
   <!-- ===== 목표 현황 ===== -->
   <div class="sec">
     <div class="card">
-      <p class="eyebrow">🎯 목표 현황</p>
+      <div class="form-head">
+        <p class="eyebrow">🎯 목표 현황</p>
+        <button type="button" class="chip" id="toggleGoalEdit">목표 수정</button>
+      </div>
       <div class="goalrow" id="goalWeightRow">
         <div class="gi">⚖️</div>
-        <div class="gtxt"><div class="glabel">체중 · 목표 62~63kg</div><div class="gval" id="goalWeightVal">-</div></div>
+        <div class="gtxt"><div class="glabel" id="goalWeightLabel">체중 · 목표 62~63kg</div><div class="gval" id="goalWeightVal">-</div></div>
         <div class="gpill neutral" id="goalWeightPill">기록 없음</div>
       </div>
       <div class="goalrow" id="goalMuscleRow">
         <div class="gi">💪</div>
-        <div class="gtxt"><div class="glabel">골격근량 · 목표 30kg 이상</div><div class="gval" id="goalMuscleVal">-</div></div>
+        <div class="gtxt"><div class="glabel" id="goalMuscleLabel">골격근량 · 목표 30kg 이상</div><div class="gval" id="goalMuscleVal">-</div></div>
         <div class="gpill neutral" id="goalMusclePill">기록 없음</div>
       </div>
+
+      <div class="goal-edit" id="goalEditForm" style="display:none">
+        <div class="grid2" style="margin-top:12px">
+          <div class="f"><label>목표 체중 하한 kg</label><input type="number" step="0.1" id="g_wlow" placeholder="62"></div>
+          <div class="f"><label>목표 체중 상한 kg</label><input type="number" step="0.1" id="g_whigh" placeholder="63"></div>
+          <div class="f wide"><label>목표 골격근량 kg (이 이상 유지)</label><input type="number" step="0.1" id="g_muscle" placeholder="30"></div>
+        </div>
+        <button type="button" class="saveBtn" id="saveGoals" style="margin-top:12px">목표 저장</button>
+      </div>
+
       <div class="streaks">
         <div class="streak"><div class="si">🔥</div><div class="sv" id="streakRun">0일</div><div class="sl">연속 러닝</div></div>
         <div class="streak"><div class="si">🚫🍺</div><div class="sv" id="streakNoDrink">0일</div><div class="sl">무음주 연속</div></div>
@@ -469,7 +482,7 @@ footer{padding:18px 20px 4px;font-family:var(--mono);font-size:10px;color:var(--
 var KEY = "stride:data";
 var bodyMem = [];   // {date, weight, smm, fm, bmr, bpSys, bpDia}
 var logMem = [];    // {id, date, kind:'run'|'push'|'drink', km?, count?, drinkType?, glasses?}
-var usingStorage = true;
+var goals = {wLow:62, wHigh:63, muscle:30};
 var view = { y:2026, m:7 };
 var selectedDrinkType = null;
 
@@ -491,32 +504,51 @@ function seed(){
   bodyMem = [{date:"2026-08-30", weight:69.8, smm:29.3, fm:15.5, bmr:1542, bpSys:null, bpDia:null}];
   logMem = [{id:genId(), date:"2026-08-30", kind:"run", km:4.0}];
 }
+function defaultGoals(){ return {wLow:62, wHigh:63, muscle:30}; }
 
-/* ---------- persistence ---------- */
+/* ---------- persistence ----------
+   Claude chat preview: uses window.storage (Claude's artifact storage API).
+   Real deployed site (GitHub Pages etc): window.storage doesn't exist there,
+   so falls back to the browser's own localStorage, which persists normally. */
 function load(){
-  if(typeof window.storage==="undefined"){
-    usingStorage=false; seed(); afterLoad("세션 메모리로 동작 중 — 새로고침 시 초기화됩니다.");
+  if(typeof window.storage!=="undefined"){
+    window.storage.get(KEY,false).then(function(r){
+      try{
+        var parsed = JSON.parse(r.value)||{};
+        bodyMem = parsed.body||[]; logMem = parsed.logs||[]; goals = parsed.goals||defaultGoals();
+      }catch(e){ bodyMem=[]; logMem=[]; goals=defaultGoals(); }
+      if(!bodyMem.length && !logMem.length) seed();
+      afterLoad("저장된 기록 불러옴 · 로그 "+logMem.length+"건");
+    }).catch(function(){
+      seed(); afterLoad("새 기록장을 시작합니다");
+    });
     return;
   }
-  window.storage.get(KEY,false).then(function(r){
-    try{
-      var parsed = JSON.parse(r.value)||{};
-      bodyMem = parsed.body||[]; logMem = parsed.logs||[];
-    }catch(e){ bodyMem=[]; logMem=[]; }
+  try{
+    var raw = localStorage.getItem(KEY);
+    var parsed = raw ? JSON.parse(raw) : {};
+    bodyMem = parsed.body||[]; logMem = parsed.logs||[]; goals = parsed.goals||defaultGoals();
     if(!bodyMem.length && !logMem.length) seed();
-    afterLoad("저장된 기록 불러옴 · 로그 "+logMem.length+"건");
-  }).catch(function(){
+    afterLoad("이 브라우저에 저장된 기록 불러옴 · 로그 "+logMem.length+"건");
+  }catch(e){
     seed(); afterLoad("새 기록장을 시작합니다");
-  });
+  }
 }
 function persist(msg){
   renderAll();
-  if(!usingStorage || typeof window.storage==="undefined"){
-    setStatus("저장됨 (세션 한정)"); return;
+  var payload = JSON.stringify({body:bodyMem, logs:logMem, goals:goals});
+  if(typeof window.storage!=="undefined"){
+    window.storage.set(KEY, payload, false).then(function(){
+      setStatus(msg || "저장 완료");
+    }).catch(function(){ setStatus("저장 실패 — 네트워크를 확인하세요"); });
+    return;
   }
-  window.storage.set(KEY, JSON.stringify({body:bodyMem, logs:logMem}), false).then(function(){
-    setStatus(msg || "저장 완료");
-  }).catch(function(){ setStatus("저장 실패 — 네트워크를 확인하세요"); });
+  try{
+    localStorage.setItem(KEY, payload);
+    setStatus(msg || "저장 완료 (이 브라우저에 저장됨)");
+  }catch(e){
+    setStatus("저장 실패 — 브라우저 저장공간을 확인하세요");
+  }
 }
 function afterLoad(msg){
   document.getElementById("i_date").value = TODAY_STR;
@@ -833,13 +865,14 @@ function bodySeriesForKey(key, dim){
 function renderLineCharts(){
   var dim = daysInMonth(view.y,view.m);
 
+  var wMid = ((goals.wLow+goals.wHigh)/2);
   var bodySvg = buildLineSvg([
     {data:bodySeriesForKey("weight",dim), color:"#00B295"},
     {data:bodySeriesForKey("smm",dim),    color:"#4C5FD5"},
     {data:bodySeriesForKey("fm",dim),     color:"#FF6B5B"}
   ], dim, {targets:[
-    {value:62.5, color:"#00B295", label:"체중 목표 62.5"},
-    {value:30,   color:"#4C5FD5", label:"근육 목표 30"}
+    {value:wMid, color:"#00B295", label:"체중 목표 "+wMid},
+    {value:goals.muscle, color:"#4C5FD5", label:"근육 목표 "+goals.muscle}
   ]});
   document.getElementById("bodyChartWrap").innerHTML = bodySvg || '<div class="empty-note">이번 달 체성분 기록이 없습니다</div>';
 
@@ -861,14 +894,17 @@ function latestBody(){
 function renderGoalStatus(){
   var latest = latestBody();
 
+  document.getElementById("goalWeightLabel").textContent = "체중 · 목표 "+goals.wLow+"~"+goals.wHigh+"kg";
+  document.getElementById("goalMuscleLabel").textContent = "골격근량 · 목표 "+goals.muscle+"kg 이상";
+
   var wVal = document.getElementById("goalWeightVal");
   var wPill = document.getElementById("goalWeightPill");
   if(latest && latest.weight!=null){
     var w = latest.weight;
     wVal.innerHTML = w.toFixed(1)+" kg <span class=\"gsub\">("+latest.date+" 기준)</span>";
-    if(w<=63 && w>=62){ wPill.className="gpill good"; wPill.textContent="목표 구간 도달"; }
-    else if(w<62){ wPill.className="gpill good"; wPill.textContent="목표 아래 -"+(62-w).toFixed(1)+"kg"; }
-    else{ wPill.className="gpill warn"; wPill.textContent="목표까지 -"+(w-63).toFixed(1)+"kg"; }
+    if(w<=goals.wHigh && w>=goals.wLow){ wPill.className="gpill good"; wPill.textContent="목표 구간 도달"; }
+    else if(w<goals.wLow){ wPill.className="gpill good"; wPill.textContent="목표 아래 -"+(goals.wLow-w).toFixed(1)+"kg"; }
+    else{ wPill.className="gpill warn"; wPill.textContent="목표까지 -"+(w-goals.wHigh).toFixed(1)+"kg"; }
   } else {
     wVal.textContent = "체중을 입력하면 표시됩니다";
     wPill.className="gpill neutral"; wPill.textContent="기록 없음";
@@ -879,15 +915,36 @@ function renderGoalStatus(){
   if(latest && latest.smm!=null){
     var m = latest.smm;
     mVal.innerHTML = m.toFixed(1)+" kg <span class=\"gsub\">("+latest.date+" 기준)</span>";
-    if(m>=30){ mPill.className="gpill good"; mPill.textContent="목표 유지 중"; }
-    else if(m>=29){ mPill.className="gpill warn"; mPill.textContent="주의 -"+(30-m).toFixed(1)+"kg"; }
-    else{ mPill.className="gpill bad"; mPill.textContent="경고 -"+(30-m).toFixed(1)+"kg"; }
+    if(m>=goals.muscle){ mPill.className="gpill good"; mPill.textContent="목표 유지 중"; }
+    else if(m>=goals.muscle-1){ mPill.className="gpill warn"; mPill.textContent="주의 -"+(goals.muscle-m).toFixed(1)+"kg"; }
+    else{ mPill.className="gpill bad"; mPill.textContent="경고 -"+(goals.muscle-m).toFixed(1)+"kg"; }
   } else {
     mVal.textContent = "골격근량을 입력하면 표시됩니다";
     mPill.className="gpill neutral"; mPill.textContent="기록 없음";
   }
 }
 
+function toggleGoalEditForm(){
+  var f = document.getElementById("goalEditForm");
+  var open = f.style.display!=="none";
+  if(open){ f.style.display="none"; }
+  else{
+    document.getElementById("g_wlow").value = goals.wLow;
+    document.getElementById("g_whigh").value = goals.wHigh;
+    document.getElementById("g_muscle").value = goals.muscle;
+    f.style.display="block";
+  }
+}
+document.getElementById("toggleGoalEdit").addEventListener("click", toggleGoalEditForm);
+document.getElementById("saveGoals").addEventListener("click", function(){
+  var wl = parseFloat(document.getElementById("g_wlow").value);
+  var wh = parseFloat(document.getElementById("g_whigh").value);
+  var mu = parseFloat(document.getElementById("g_muscle").value);
+  if(!wl || !wh || !mu || wl>wh){ setStatus("목표 값을 올바르게 입력해주세요 (하한 ≤ 상한)"); return; }
+  goals = {wLow:wl, wHigh:wh, muscle:mu};
+  document.getElementById("goalEditForm").style.display="none";
+  persist("목표 저장 완료");
+});
 /* ---------- streaks ---------- */
 function earliestDateStr(){
   var dates = logMem.map(function(x){return x.date;}).concat(bodyMem.map(function(x){return x.date;}));
