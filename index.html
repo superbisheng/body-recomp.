@@ -100,7 +100,7 @@ header::after{
 .addrow{margin-bottom:14px;}
 .addrow-top{display:flex;gap:8px;align-items:center;}
 .addrow-top input[type=number]{
-  flex:1;font-family:var(--mono);font-size:17px;font-weight:800;color:var(--ink);
+  flex:1;font-family:var(--mono);font-size:15px;font-weight:700;color:var(--ink);
   border:1.5px solid var(--line);border-radius:12px;padding:10px 11px;background:var(--card-soft);
   min-width:0;
 }
@@ -223,8 +223,23 @@ header::after{
 .dbk-row .v{font-family:var(--mono);font-size:12px;font-weight:800;text-align:right;}
 
 /* charts */
+/* activity trend tabs */
+.tabrow{display:flex;gap:6px;margin-top:10px;}
+.tabrow:first-of-type{margin-top:8px;}
+.tabrow.sub{margin-top:8px;}
+.tabbtn{
+  flex:1;font-size:12.5px;font-weight:800;padding:9px 0;border-radius:11px;
+  border:1.5px solid var(--line);background:var(--card-soft);color:var(--sub);cursor:pointer;
+}
+.tabrow.sub .tabbtn{font-size:12px;font-weight:700;padding:7px 0;}
+.tabbtn.on-run{background:#E7F2FA;border-color:var(--blue);color:var(--blue-dk);}
+.tabbtn.on-push{background:#FFF1E0;border-color:var(--orange);color:#B85E00;}
+.tabbtn.on-drink{background:var(--red-soft);border-color:var(--red);color:var(--red);}
+.tabbtn.on-gran{background:var(--ink);border-color:var(--ink);color:#fff;}
+
 .chart-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
 .chart-title{font-size:13.5px;font-weight:800;display:flex;align-items:center;gap:6px;}
+.chart-cap{font-size:11px;font-weight:600;color:var(--faint);text-transform:none;letter-spacing:0;}
 .chart-title i{width:9px;height:9px;border-radius:50%;display:inline-block;}
 .chart-max{font-family:var(--mono);font-size:11px;color:var(--faint);}
 .bars{display:flex;align-items:flex-end;gap:2px;height:110px;}
@@ -394,78 +409,67 @@ footer{padding:18px 20px 4px;font-family:var(--mono);font-size:10px;color:var(--
     </div>
   </div>
 
-  <!-- ===== 주간 누적 추이 ===== -->
+  <!-- ===== 활동 추이 (일간/주간/월간) ===== -->
   <div class="sec">
     <div class="card">
-      <p class="eyebrow">📅 주간 누적 추이 (최근 8주 · 월요일 시작)</p>
-      <div class="chart-head" style="margin-top:12px">
-        <span class="chart-title"><i style="background:var(--blue)"></i>러닝 주간 합계</span>
-        <span class="chart-max" id="wkRunMax">-</span>
-      </div>
-      <div class="bars" id="wkRunBars"></div>
-      <div class="chart-xaxis"><span id="wkRunFirst">-</span><span>이번주</span></div>
+      <p class="eyebrow">📊 활동 추이</p>
 
-      <div class="chart-head" style="margin-top:20px">
-        <span class="chart-title"><i style="background:var(--orange)"></i>푸시업 주간 합계</span>
-        <span class="chart-max" id="wkPushMax">-</span>
+      <div class="tabrow" id="metricTabs">
+        <button type="button" class="tabbtn" data-metric="run">🏃 러닝</button>
+        <button type="button" class="tabbtn" data-metric="push">💪 푸시업</button>
+        <button type="button" class="tabbtn" data-metric="drink">🍺 음주</button>
       </div>
-      <div class="bars" id="wkPushBars"></div>
-      <div class="chart-xaxis"><span id="wkPushFirst">-</span><span>이번주</span></div>
+      <div class="tabrow sub" id="granTabs">
+        <button type="button" class="tabbtn" data-gran="day">일간</button>
+        <button type="button" class="tabbtn" data-gran="week">주간</button>
+        <button type="button" class="tabbtn" data-gran="month">월간</button>
+      </div>
 
-      <div class="chart-head" style="margin-top:20px">
-        <span class="chart-title"><i style="background:var(--red)"></i>음주 주간 합계 (잔)</span>
-        <span class="chart-max" id="wkDrinkMax">-</span>
+      <div class="chart-head" style="margin-top:14px">
+        <span class="chart-title"><i id="actDot" style="background:var(--blue)"></i><span id="actTitle">러닝 · 일간</span></span>
+        <span class="chart-max" id="actMax">-</span>
       </div>
-      <div class="bars" id="wkDrinkBars"></div>
-      <div class="chart-xaxis"><span id="wkDrinkFirst">-</span><span>이번주</span></div>
-    </div>
-  </div>
-
-  <!-- ===== 막대그래프 (이번 달 일별) ===== -->
-  <div class="sec">
-    <div class="card">
-      <div class="chart-head">
-        <span class="chart-title"><i style="background:var(--blue)"></i>러닝 거리 (일별 합계)</span>
-        <span class="chart-max" id="runChartMax">-</span>
-      </div>
-      <div class="bars" id="runBars"></div>
-      <div class="chart-xaxis"><span>1일</span><span id="runMidLabel">-</span><span id="runLastLabel">-</span></div>
-    </div>
-
-    <div class="card">
-      <div class="chart-head">
-        <span class="chart-title"><i style="background:var(--orange)"></i>푸시업 (일별 합계)</span>
-        <span class="chart-max" id="pushChartMax">-</span>
-      </div>
-      <div class="bars" id="pushBars"></div>
-      <div class="chart-xaxis"><span>1일</span><span id="pushMidLabel">-</span><span id="pushLastLabel">-</span></div>
+      <div class="bars" id="actBars"></div>
+      <div class="chart-xaxis"><span id="actFirst">-</span><span id="actLast">-</span></div>
     </div>
   </div>
 
   <!-- ===== 꺾은선그래프 ===== -->
   <div class="sec">
     <div class="card">
-      <p class="eyebrow">체성분 추이</p>
+      <p class="eyebrow">📈 신체 지표 추이</p>
+      <div class="tabrow" id="vitalsGranTabs">
+        <button type="button" class="tabbtn" data-vgran="day">일간</button>
+        <button type="button" class="tabbtn" data-vgran="week">주간 평균</button>
+        <button type="button" class="tabbtn" data-vgran="month">월간 평균</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">체성분 추이 <span class="chart-cap" id="bodyCap"></span></p>
       <div class="legend">
         <span><i style="background:var(--c-weight)"></i>체중</span>
         <span><i style="background:var(--c-smm)"></i>골격근량</span>
         <span><i style="background:var(--c-fm)"></i>체지방량</span>
       </div>
       <div id="bodyChartWrap"></div>
+      <div class="chart-xaxis"><span id="bodyFirst">-</span><span id="bodyLast">-</span></div>
     </div>
 
     <div class="card">
-      <p class="eyebrow">기초대사량 추이</p>
+      <p class="eyebrow">기초대사량 추이 <span class="chart-cap" id="bmrCap"></span></p>
       <div id="bmrChartWrap"></div>
+      <div class="chart-xaxis"><span id="bmrFirst">-</span><span id="bmrLast">-</span></div>
     </div>
 
     <div class="card">
-      <p class="eyebrow">혈압 추이</p>
+      <p class="eyebrow">혈압 추이 <span class="chart-cap" id="bpCap"></span></p>
       <div class="legend">
         <span><i style="background:var(--c-sys)"></i>수축기</span>
         <span><i style="background:var(--c-dia)"></i>이완기</span>
       </div>
       <div id="bpChartWrap"></div>
+      <div class="chart-xaxis"><span id="bpFirst">-</span><span id="bpLast">-</span></div>
     </div>
   </div>
 
@@ -781,28 +785,6 @@ function renderMonthStats(){
 }
 
 /* ---------- render: bar charts ---------- */
-function renderBarChart(barsId, maxId, midId, lastId, kind, valKey, color, unit, minMax){
-  var dim = daysInMonth(view.y,view.m);
-  var vals = [];
-  for(var d=1; d<=dim; d++){
-    var ds = dstr(view.y,view.m,d);
-    var dayLogs = logMem.filter(function(x){ return x.date===ds && x.kind===kind; });
-    var sum = dayLogs.reduce(function(s,x){ return s+x[valKey]; },0);
-    vals.push(dayLogs.length ? sum : null);
-  }
-  var present = vals.filter(function(v){ return v!=null; });
-  var max = present.length ? Math.max.apply(null,present) : minMax;
-  max = Math.max(max, minMax*0.4);
-  var html = "";
-  vals.forEach(function(v){
-    var h = v ? Math.max(4,(v/max*100)) : 2;
-    html += '<div class="barcol"><div class="barfill" style="height:'+h+'%;background:'+color+'"></div></div>';
-  });
-  document.getElementById(barsId).innerHTML = html;
-  document.getElementById(maxId).textContent = present.length ? ("최대 "+Math.max.apply(null,present).toFixed(unit==="km"?2:0)+unit) : "기록 없음";
-  document.getElementById(midId).textContent = Math.ceil(dim/2)+"일";
-  document.getElementById(lastId).textContent = dim+"일";
-}
 
 /* ---------- render: line charts (svg) ---------- */
 function buildLineSvg(seriesList, dim, opts){
@@ -853,38 +835,83 @@ function buildLineSvg(seriesList, dim, opts){
   return svg;
 }
 
-function bodySeriesForKey(key, dim){
-  var arr=[];
+function avgBodyInRange(key, startStr, endStr){
+  var vals = bodyMem.filter(function(e){ return e.date>=startStr && e.date<=endStr && e[key]!=null; })
+                     .map(function(e){ return e[key]; });
+  if(!vals.length) return null;
+  return vals.reduce(function(s,v){ return s+v; },0) / vals.length;
+}
+function avgBodyInMonth(key, y, m){
+  var prefix = y+"-"+pad2(m+1)+"-";
+  var vals = bodyMem.filter(function(e){ return e.date.indexOf(prefix)===0 && e[key]!=null; })
+                     .map(function(e){ return e[key]; });
+  if(!vals.length) return null;
+  return vals.reduce(function(s,v){ return s+v; },0) / vals.length;
+}
+function vitalsSeriesForKey(key, gran){
+  if(gran==="week"){
+    var wb = weekBuckets(8);
+    var data = wb.map(function(b){ return avgBodyInRange(key, b.startStr, b.endStr); });
+    return {data:data, dim:8, first:wb[0].label+"주", last:"이번주", caption:"최근 8주 평균"};
+  }
+  if(gran==="month"){
+    var mb = monthBuckets(6);
+    var data = mb.map(function(b){ return avgBodyInMonth(key, b.y, b.m); });
+    return {data:data, dim:6, first:mb[0].label, last:"이번달", caption:"최근 6개월 평균"};
+  }
+  var dim = daysInMonth(view.y,view.m);
+  var data = [];
   for(var d=1; d<=dim; d++){
     var e=findBody(dstr(view.y,view.m,d));
-    arr.push(e && e[key]!=null ? e[key] : null);
+    data.push(e && e[key]!=null ? e[key] : null);
   }
-  return arr;
+  return {data:data, dim:dim, first:"1일", last:dim+"일", caption:monthLabelStr(view.y,view.m)+" · 일별 측정값"};
 }
 
 function renderLineCharts(){
-  var dim = daysInMonth(view.y,view.m);
+  document.querySelectorAll("#vitalsGranTabs .tabbtn").forEach(function(b){
+    b.className = "tabbtn" + (b.dataset.vgran===vitalsGran ? " on-gran" : "");
+  });
+
+  var wS = vitalsSeriesForKey("weight", vitalsGran);
+  var sS = vitalsSeriesForKey("smm", vitalsGran);
+  var fS = vitalsSeriesForKey("fm", vitalsGran);
 
   var wMid = ((goals.wLow+goals.wHigh)/2);
   var bodySvg = buildLineSvg([
-    {data:bodySeriesForKey("weight",dim), color:"#00B295"},
-    {data:bodySeriesForKey("smm",dim),    color:"#4C5FD5"},
-    {data:bodySeriesForKey("fm",dim),     color:"#FF6B5B"}
-  ], dim, {targets:[
+    {data:wS.data, color:"#00B295"},
+    {data:sS.data, color:"#4C5FD5"},
+    {data:fS.data, color:"#FF6B5B"}
+  ], wS.dim, {targets:[
     {value:wMid, color:"#00B295", label:"체중 목표 "+wMid},
     {value:goals.muscle, color:"#4C5FD5", label:"근육 목표 "+goals.muscle}
   ]});
-  document.getElementById("bodyChartWrap").innerHTML = bodySvg || '<div class="empty-note">이번 달 체성분 기록이 없습니다</div>';
+  document.getElementById("bodyChartWrap").innerHTML = bodySvg || '<div class="empty-note">표시할 체성분 기록이 없습니다</div>';
+  document.getElementById("bodyCap").textContent = wS.caption;
+  document.getElementById("bodyFirst").textContent = wS.first;
+  document.getElementById("bodyLast").textContent = wS.last;
 
-  var bmrSvg = buildLineSvg([{data:bodySeriesForKey("bmr",dim), color:"#2F3E85"}], dim, {});
-  document.getElementById("bmrChartWrap").innerHTML = bmrSvg || '<div class="empty-note">이번 달 기초대사량 기록이 없습니다</div>';
+  var bmrS = vitalsSeriesForKey("bmr", vitalsGran);
+  var bmrSvg = buildLineSvg([{data:bmrS.data, color:"#2F3E85"}], bmrS.dim, {});
+  document.getElementById("bmrChartWrap").innerHTML = bmrSvg || '<div class="empty-note">표시할 기초대사량 기록이 없습니다</div>';
+  document.getElementById("bmrCap").textContent = bmrS.caption;
+  document.getElementById("bmrFirst").textContent = bmrS.first;
+  document.getElementById("bmrLast").textContent = bmrS.last;
 
+  var sysS = vitalsSeriesForKey("bpSys", vitalsGran);
+  var diaS = vitalsSeriesForKey("bpDia", vitalsGran);
   var bpSvg = buildLineSvg([
-    {data:bodySeriesForKey("bpSys",dim), color:"#6C4FF6"},
-    {data:bodySeriesForKey("bpDia",dim), color:"#C9B8FE"}
-  ], dim, {});
-  document.getElementById("bpChartWrap").innerHTML = bpSvg || '<div class="empty-note">이번 달 혈압 기록이 없습니다</div>';
+    {data:sysS.data, color:"#6C4FF6"},
+    {data:diaS.data, color:"#C9B8FE"}
+  ], sysS.dim, {});
+  document.getElementById("bpChartWrap").innerHTML = bpSvg || '<div class="empty-note">표시할 혈압 기록이 없습니다</div>';
+  document.getElementById("bpCap").textContent = sysS.caption;
+  document.getElementById("bpFirst").textContent = sysS.first;
+  document.getElementById("bpLast").textContent = sysS.last;
 }
+document.querySelectorAll("#vitalsGranTabs .tabbtn").forEach(function(b){
+  b.addEventListener("click", function(){ vitalsGran = b.dataset.vgran; renderLineCharts(); });
+});
 
 /* ---------- goal status ---------- */
 function latestBody(){
@@ -982,7 +1009,31 @@ function renderStreaks(){
   document.getElementById("streakNoDrink").textContent = streakNoDrinkDays()+"일";
 }
 
-/* ---------- weekly trend (last 8 weeks, Monday-start) ---------- */
+/* ---------- activity trend (day / week / month, for run / push / drink) ---------- */
+var METRICS = {
+  run:   {kind:"run",   valKey:"km",      color:"#0078C8", unit:"km", label:"러닝",   tabClass:"on-run"},
+  push:  {kind:"push",  valKey:"count",   color:"#FF8A00", unit:"개", label:"푸시업", tabClass:"on-push"},
+  drink: {kind:"drink", valKey:"glasses", color:"#E5384F", unit:"잔", label:"음주",   tabClass:"on-drink"}
+};
+var chartMetric = "run";
+var chartGran = "day";
+var vitalsGran = "day";
+
+function dailySumsForMonth(kind, valKey, y, m){
+  var dim = daysInMonth(y,m);
+  var arr = [];
+  for(var d=1; d<=dim; d++){
+    var ds = dstr(y,m,d);
+    var dayLogs = logMem.filter(function(x){ return x.date===ds && x.kind===kind; });
+    var sum = dayLogs.reduce(function(s,x){ return s+x[valKey]; },0);
+    arr.push(dayLogs.length ? sum : null);
+  }
+  return arr;
+}
+function sumInRange(kind, valKey, startStr, endStr){
+  return logMem.filter(function(x){ return x.kind===kind && x.date>=startStr && x.date<=endStr; })
+               .reduce(function(s,x){ return s+x[valKey]; },0);
+}
 function weekBuckets(n){
   var t = new Date(TODAY.y,TODAY.m,TODAY.d);
   var dow = t.getDay(); // 0=Sun..6=Sat
@@ -992,36 +1043,87 @@ function weekBuckets(n){
   for(var i=n-1;i>=0;i--){
     var start = new Date(thisMonday); start.setDate(thisMonday.getDate()-i*7);
     var end = new Date(start); end.setDate(start.getDate()+6);
-    buckets.push({start:start, end:end,
+    buckets.push({
       startStr: dstr(start.getFullYear(),start.getMonth(),start.getDate()),
-      endStr: dstr(end.getFullYear(),end.getMonth(),end.getDate())});
+      endStr: dstr(end.getFullYear(),end.getMonth(),end.getDate()),
+      label: (start.getMonth()+1)+"/"+start.getDate()
+    });
   }
   return buckets;
 }
-function sumInRange(kind, valKey, startStr, endStr){
-  return logMem.filter(function(x){ return x.kind===kind && x.date>=startStr && x.date<=endStr; })
+function monthBuckets(n){
+  var buckets=[];
+  var y=TODAY.y, m=TODAY.m;
+  for(var i=n-1;i>=0;i--){
+    var mm=m-i, yy=y;
+    while(mm<0){ mm+=12; yy--; }
+    buckets.push({y:yy, m:mm, label:(mm+1)+"월"});
+  }
+  return buckets;
+}
+function sumInMonth(kind, valKey, y, m){
+  var prefix = y+"-"+pad2(m+1)+"-";
+  return logMem.filter(function(x){ return x.kind===kind && x.date.indexOf(prefix)===0; })
                .reduce(function(s,x){ return s+x[valKey]; },0);
 }
-function renderWeeklyBar(barsId, maxId, firstId, kind, valKey, color, unit){
-  var buckets = weekBuckets(8);
-  var vals = buckets.map(function(b){ return sumInRange(kind, valKey, b.startStr, b.endStr); });
-  var max = Math.max.apply(null, vals.concat([kind==="drink"?1:(kind==="push"?10:1)]));
+
+function renderActivityChart(){
+  var cfg = METRICS[chartMetric];
+
+  document.querySelectorAll("#metricTabs .tabbtn").forEach(function(b){
+    var m = b.dataset.metric;
+    b.className = "tabbtn" + (m===chartMetric ? " "+METRICS[m].tabClass : "");
+  });
+  document.querySelectorAll("#granTabs .tabbtn").forEach(function(b){
+    b.className = "tabbtn" + (b.dataset.gran===chartGran ? " on-gran" : "");
+  });
+  document.getElementById("actDot").style.background = cfg.color;
+
+  var vals, firstLabel, lastLabel, titleSuffix, minMax;
+  var decimals = cfg.unit==="km" ? 1 : 0;
+
+  if(chartGran==="day"){
+    vals = dailySumsForMonth(cfg.kind, cfg.valKey, view.y, view.m);
+    firstLabel = "1일"; lastLabel = vals.length+"일";
+    titleSuffix = monthLabelStr(view.y,view.m)+" · 일간";
+    minMax = cfg.unit==="km" ? 2 : (cfg.unit==="개" ? 10 : 1);
+  } else if(chartGran==="week"){
+    var wb = weekBuckets(8);
+    vals = wb.map(function(b){ var s=sumInRange(cfg.kind, cfg.valKey, b.startStr, b.endStr); return s>0?s:null; });
+    firstLabel = wb[0].label+"주"; lastLabel = "이번주";
+    titleSuffix = "최근 8주 · 주간";
+    minMax = cfg.unit==="km" ? 5 : (cfg.unit==="개" ? 30 : 1);
+  } else {
+    var mb = monthBuckets(6);
+    vals = mb.map(function(b){ var s=sumInMonth(cfg.kind, cfg.valKey, b.y, b.m); return s>0?s:null; });
+    firstLabel = mb[0].label; lastLabel = "이번달";
+    titleSuffix = "최근 6개월 · 월간";
+    minMax = cfg.unit==="km" ? 15 : (cfg.unit==="개" ? 100 : 4);
+  }
+
+  document.getElementById("actTitle").textContent = cfg.label+" · "+titleSuffix;
+
+  var present = vals.filter(function(v){ return v!=null; });
+  var max = present.length ? Math.max.apply(null,present) : minMax;
+  max = Math.max(max, minMax*0.4);
+
   var html = "";
   vals.forEach(function(v){
-    var h = v>0 ? Math.max(4,(v/max*100)) : 2;
-    html += '<div class="barcol"><div class="barfill" style="height:'+h+'%;background:'+color+'"></div></div>';
+    var h = v ? Math.max(4,(v/max*100)) : 2;
+    html += '<div class="barcol"><div class="barfill" style="height:'+h+'%;background:'+cfg.color+'"></div></div>';
   });
-  document.getElementById(barsId).innerHTML = html;
-  var m = Math.max.apply(null, vals);
-  document.getElementById(maxId).textContent = m>0 ? ("최고주 "+(unit==="km"?m.toFixed(1):m)+unit) : "기록 없음";
-  var first = buckets[0];
-  document.getElementById(firstId).textContent = (first.start.getMonth()+1)+"/"+first.start.getDate()+"주";
+  document.getElementById("actBars").innerHTML = html;
+  document.getElementById("actMax").textContent = present.length ?
+    ("최대 "+Math.max.apply(null,present).toFixed(decimals)+cfg.unit) : "기록 없음";
+  document.getElementById("actFirst").textContent = firstLabel;
+  document.getElementById("actLast").textContent = lastLabel;
 }
-function renderWeeklyCharts(){
-  renderWeeklyBar("wkRunBars","wkRunMax","wkRunFirst","run","km","#0078C8","km");
-  renderWeeklyBar("wkPushBars","wkPushMax","wkPushFirst","push","count","#FF8A00","개");
-  renderWeeklyBar("wkDrinkBars","wkDrinkMax","wkDrinkFirst","drink","glasses","#E5384F","잔");
-}
+document.querySelectorAll("#metricTabs .tabbtn").forEach(function(b){
+  b.addEventListener("click", function(){ chartMetric = b.dataset.metric; renderActivityChart(); });
+});
+document.querySelectorAll("#granTabs .tabbtn").forEach(function(b){
+  b.addEventListener("click", function(){ chartGran = b.dataset.gran; renderActivityChart(); });
+});
 
 /* ---------- month navigation ---------- */
 document.getElementById("prevM").addEventListener("click", function(){
@@ -1042,9 +1144,7 @@ function renderAll(){
   renderStreaks();
   renderCalendar();
   renderMonthStats();
-  renderWeeklyCharts();
-  renderBarChart("runBars","runChartMax","runMidLabel","runLastLabel","run","km","#0078C8","km",5);
-  renderBarChart("pushBars","pushChartMax","pushMidLabel","pushLastLabel","push","count","#FF8A00","개",30);
+  renderActivityChart();
   renderLineCharts();
 }
 
