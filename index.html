@@ -392,12 +392,12 @@ footer{padding:18px 20px 4px;font-family:var(--mono);font-size:10px;color:var(--
     <div class="card">
       <p class="eyebrow">⚖️ 아침 측정 — 위에서 고른 날짜 기준</p>
       <div class="grid2">
-        <div class="f"><label>체중 kg</label><input type="number" step="0.1" id="i_w" placeholder="69.8"></div>
-        <div class="f"><label>골격근량 kg</label><input type="number" step="0.1" id="i_smm" placeholder="29.3"></div>
-        <div class="f"><label>체지방량 kg</label><input type="number" step="0.1" id="i_fm" placeholder="15.5"></div>
-        <div class="f"><label>기초대사량 kcal</label><input type="number" id="i_bmr" placeholder="1542"></div>
-        <div class="f"><label>혈압 수축기</label><input type="number" id="i_sys" placeholder="118"></div>
-        <div class="f"><label>혈압 이완기</label><input type="number" id="i_dia" placeholder="76"></div>
+        <div class="f"><label>체중 kg</label><input type="number" step="0.1" id="i_w"></div>
+        <div class="f"><label>골격근량 kg</label><input type="number" step="0.1" id="i_smm"></div>
+        <div class="f"><label>체지방량 kg</label><input type="number" step="0.1" id="i_fm"></div>
+        <div class="f"><label>기초대사량 kcal</label><input type="number" id="i_bmr"></div>
+        <div class="f"><label>혈압 수축기</label><input type="number" id="i_sys"></div>
+        <div class="f"><label>혈압 이완기</label><input type="number" id="i_dia"></div>
       </div>
       <button class="saveBtn" id="saveVitals">아침 측정 저장</button>
     </div>
@@ -515,7 +515,7 @@ footer{padding:18px 20px 4px;font-family:var(--mono);font-size:10px;color:var(--
 var KEY = "stride:data";
 var bodyMem = [];   // {date, weight, smm, fm, bmr, bpSys, bpDia}
 var logMem = [];    // {id, date, kind:'run'|'push'|'drink', km?, count?, drinkType?, glasses?}
-var goals = {wLow:62, wHigh:63, muscle:30};
+var goals = null;
 var view = { y:2026, m:7 };
 var selectedDrinkType = null;
 
@@ -537,7 +537,7 @@ function seed(){
   bodyMem = [];
   logMem = [];
 }
-function defaultGoals(){ return {wLow:62, wHigh:63, muscle:30}; }
+function defaultGoals(){ return null; }
 
 /* ---------- persistence ----------
    Claude chat preview: uses window.storage (Claude's artifact storage API).
@@ -905,15 +905,15 @@ function renderLineCharts(){
   var sS = vitalsSeriesForKey("smm", vitalsGran);
   var fS = vitalsSeriesForKey("fm", vitalsGran);
 
-  var wMid = ((goals.wLow+goals.wHigh)/2);
+  var bodyTargets = goals ? [
+    {value:(goals.wLow+goals.wHigh)/2, color:"#00B295", label:"체중 목표"},
+    {value:goals.muscle, color:"#4C5FD5", label:"근육 목표"}
+  ] : [];
   var bodySvg = buildLineSvg([
     {data:wS.data, color:"#00B295"},
     {data:sS.data, color:"#4C5FD5"},
     {data:fS.data, color:"#FF6B5B"}
-  ], wS.dim, {targets:[
-    {value:wMid, color:"#00B295", label:"체중 목표 "+wMid},
-    {value:goals.muscle, color:"#4C5FD5", label:"근육 목표 "+goals.muscle}
-  ]});
+  ], wS.dim, {targets:bodyTargets});
   document.getElementById("bodyChartWrap").innerHTML = bodySvg || '<div class="empty-note">표시할 체성분 기록이 없습니다</div>';
   document.getElementById("bodyCap").textContent = wS.caption;
   document.getElementById("bodyFirst").textContent = wS.first;
@@ -955,12 +955,17 @@ function latestBody(){
 function renderGoalStatus(){
   var latest = latestBody();
 
-  document.getElementById("goalWeightLabel").textContent = "체중 · 목표 "+goals.wLow+"~"+goals.wHigh+"kg";
-  document.getElementById("goalMuscleLabel").textContent = "골격근량 · 목표 "+goals.muscle+"kg 이상";
+  document.getElementById("goalWeightLabel").textContent = goals ?
+    ("체중 · 목표 "+goals.wLow+"~"+goals.wHigh+"kg") : "체중 · 목표 미설정";
+  document.getElementById("goalMuscleLabel").textContent = goals ?
+    ("골격근량 · 목표 "+goals.muscle+"kg 이상") : "골격근량 · 목표 미설정";
 
   var wVal = document.getElementById("goalWeightVal");
   var wPill = document.getElementById("goalWeightPill");
-  if(latest && latest.weight!=null){
+  if(!goals){
+    wVal.textContent = "오른쪽 '목표 수정'에서 먼저 설정해주세요";
+    wPill.className="gpill neutral"; wPill.textContent="목표 미설정";
+  } else if(latest && latest.weight!=null){
     var w = latest.weight;
     wVal.innerHTML = w.toFixed(1)+" kg <span class=\"gsub\">("+latest.date+" 기준)</span>";
     if(w<=goals.wHigh && w>=goals.wLow){ wPill.className="gpill good"; wPill.textContent="목표 구간 도달"; }
@@ -973,7 +978,10 @@ function renderGoalStatus(){
 
   var mVal = document.getElementById("goalMuscleVal");
   var mPill = document.getElementById("goalMusclePill");
-  if(latest && latest.smm!=null){
+  if(!goals){
+    mVal.textContent = "오른쪽 '목표 수정'에서 먼저 설정해주세요";
+    mPill.className="gpill neutral"; mPill.textContent="목표 미설정";
+  } else if(latest && latest.smm!=null){
     var m = latest.smm;
     mVal.innerHTML = m.toFixed(1)+" kg <span class=\"gsub\">("+latest.date+" 기준)</span>";
     if(m>=goals.muscle){ mPill.className="gpill good"; mPill.textContent="목표 유지 중"; }
@@ -990,9 +998,9 @@ function toggleGoalEditForm(){
   var open = f.style.display!=="none";
   if(open){ f.style.display="none"; }
   else{
-    document.getElementById("g_wlow").value = goals.wLow;
-    document.getElementById("g_whigh").value = goals.wHigh;
-    document.getElementById("g_muscle").value = goals.muscle;
+    document.getElementById("g_wlow").value = goals ? goals.wLow : "";
+    document.getElementById("g_whigh").value = goals ? goals.wHigh : "";
+    document.getElementById("g_muscle").value = goals ? goals.muscle : "";
     f.style.display="block";
   }
 }
