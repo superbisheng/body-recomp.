@@ -3,6 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <title>Body Recomp. — by superbisheng</title>
 <style>
 :root{
@@ -26,7 +29,6 @@
   --c-weight:#00B295;
   --c-smm:#4C5FD5;
   --c-fm:#FF6B5B;
-  --c-bmi:#F2A900;
   --c-bmr:#2F3E85;
   --c-sys:#6C4FF6;
   --c-dia:#C9B8FE;
@@ -36,7 +38,7 @@
   --somaek:#D6336C;
   --etc:#8C98A5;
 
-  --sans:-apple-system,BlinkMacSystemFont,"Pretendard","Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",system-ui,sans-serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Inter","Pretendard","Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",system-ui,sans-serif;
   --mono:ui-monospace,"SF Mono","Roboto Mono",Menlo,Consolas,monospace;
 }
 *{box-sizing:border-box;}
@@ -66,15 +68,15 @@ header::after{
   border-radius:50%;background:rgba(255,255,255,.08);
 }
 .wordmark-row{display:flex;align-items:baseline;gap:9px;margin:0 0 2px;flex-wrap:wrap;}
-.wordmark-main{font-size:19px;font-weight:800;letter-spacing:.01em;color:#fff;}
-.wordmark-by{font-size:10px;font-weight:600;letter-spacing:.04em;color:rgba(255,255,255,.65);}
-.today-date{font-size:22px;font-weight:800;letter-spacing:-.01em;margin:0 0 16px;}
+.wordmark-main{font-size:19px;font-weight:900;letter-spacing:-.01em;color:#fff;}
+.wordmark-by{font-size:10px;font-weight:700;letter-spacing:.04em;color:rgba(255,255,255,.65);}
+.today-date{font-size:22px;font-weight:900;letter-spacing:-.02em;margin:0 0 16px;}
 .today-chips{display:flex;gap:8px;position:relative;z-index:1;}
 .chip-stat{
   flex:1;background:rgba(255,255,255,.14);border-radius:12px;padding:9px 10px;
 }
 .chip-stat .l{font-size:10px;font-weight:700;letter-spacing:.06em;opacity:.8;}
-.chip-stat .v{font-size:16px;font-weight:800;margin-top:1px;}
+.chip-stat .v{font-size:16px;font-weight:900;margin-top:1px;}
 
 .sec{padding:16px 16px 0;}
 .card{
@@ -152,11 +154,6 @@ header::after{
   border:1.5px solid var(--line);border-radius:10px;padding:9px 10px;background:var(--card-soft);
 }
 .f input:focus{outline:none;border-color:var(--blue);background:#fff;}
-.bmiPreview{
-  margin-top:14px;background:#FFF7E6;border:1px dashed var(--c-bmi);border-radius:12px;
-  padding:10px 12px;font-size:12.5px;color:#8A6300;font-weight:700;
-}
-.bmiPreview b{font-family:var(--mono);font-size:15px;}
 .saveBtn{
   width:100%;margin-top:16px;padding:14px;border:none;border-radius:14px;
   background:var(--ink);color:#fff;font-size:15px;font-weight:800;letter-spacing:.02em;cursor:pointer;
@@ -195,7 +192,7 @@ header::after{
 .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
 .kpi{background:var(--card-soft);border-radius:12px;padding:10px 6px;text-align:center;}
 .kpi .ic{font-size:15px;}
-.kpi .v{font-family:var(--mono);font-size:15px;font-weight:800;margin-top:2px;}
+.kpi .v{font-family:var(--mono);font-size:15px;font-weight:900;margin-top:2px;}
 .kpi .k{font-size:9.5px;color:var(--faint);font-weight:700;margin-top:1px;}
 
 /* goal status */
@@ -204,8 +201,9 @@ header::after{
 .goalrow .gi{font-size:21px;width:28px;text-align:center;flex-shrink:0;}
 .goalrow .gtxt{flex:1;min-width:0;}
 .goalrow .gtxt .glabel{font-size:11.5px;color:var(--sub);font-weight:700;}
-.goalrow .gtxt .gval{font-family:var(--mono);font-size:17px;font-weight:800;margin-top:1px;}
-.gpill{font-size:10.5px;font-weight:800;padding:5px 10px;border-radius:20px;white-space:nowrap;flex-shrink:0;}
+.goalrow .gtxt .gval{font-family:var(--mono);font-size:17px;font-weight:900;margin-top:1px;}
+.goalrow .gtxt .gval .gsub{font-size:11px;font-weight:600;color:var(--faint);}
+.gpill{font-size:10.5px;font-weight:900;padding:5px 10px;border-radius:20px;white-space:nowrap;flex-shrink:0;}
 .gpill.good{background:var(--green-soft);color:var(--green);}
 .gpill.warn{background:#FFF3DC;color:#B85E00;}
 .gpill.bad{background:var(--red-soft);color:var(--red);}
@@ -213,7 +211,7 @@ header::after{
 .streaks{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;}
 .streak{background:var(--card-soft);border-radius:12px;padding:10px 8px;text-align:center;}
 .streak .si{font-size:16px;}
-.streak .sv{font-family:var(--mono);font-size:17px;font-weight:800;margin-top:2px;}
+.streak .sv{font-family:var(--mono);font-size:17px;font-weight:900;margin-top:2px;}
 .streak .sl{font-size:9.5px;color:var(--faint);font-weight:700;margin-top:1px;}
 
 /* drink breakdown */
@@ -350,7 +348,6 @@ footer{padding:18px 20px 4px;font-family:var(--mono);font-size:10px;color:var(--
         <div class="f"><label>혈압 수축기</label><input type="number" id="i_sys" placeholder="118"></div>
         <div class="f"><label>혈압 이완기</label><input type="number" id="i_dia" placeholder="76"></div>
       </div>
-      <div class="bmiPreview" id="bmiPreview">BMI 자동계산 — 체중 입력 시 표시됩니다 (신장 165cm 고정)</div>
       <button class="saveBtn" id="saveVitals">아침 측정 저장</button>
     </div>
   </div>
@@ -445,11 +442,6 @@ footer{padding:18px 20px 4px;font-family:var(--mono);font-size:10px;color:var(--
     </div>
 
     <div class="card">
-      <p class="eyebrow">BMI 추이 <span style="color:var(--faint);font-weight:600">(체중 기반 자동계산)</span></p>
-      <div id="bmiChartWrap"></div>
-    </div>
-
-    <div class="card">
       <p class="eyebrow">기초대사량 추이</p>
       <div id="bmrChartWrap"></div>
     </div>
@@ -474,7 +466,6 @@ footer{padding:18px 20px 4px;font-family:var(--mono);font-size:10px;color:var(--
 <script>
 (function(){
 "use strict";
-var HEIGHT_M = 1.65;
 var KEY = "stride:data";
 var bodyMem = [];   // {date, weight, smm, fm, bmr, bpSys, bpDia}
 var logMem = [];    // {id, date, kind:'run'|'push'|'drink', km?, count?, drinkType?, glasses?}
@@ -494,7 +485,6 @@ var TODAY_STR = dstr(TODAY.y,TODAY.m,TODAY.d);
 
 function curDate(){ return document.getElementById("i_date").value || TODAY_STR; }
 function findBody(d){ for(var i=0;i<bodyMem.length;i++){ if(bodyMem[i].date===d) return bodyMem[i]; } return null; }
-function bmiOf(w){ return w ? (w/(HEIGHT_M*HEIGHT_M)) : null; }
 function num(id){ var v=document.getElementById(id).value; return v===""? null : parseFloat(v); }
 
 function seed(){
@@ -537,16 +527,6 @@ function afterLoad(msg){
 function setStatus(t){ document.getElementById("status").textContent = t; }
 
 /* ---------- vitals form ---------- */
-function updateBmiPreview(){
-  var w = num("i_w");
-  var el = document.getElementById("bmiPreview");
-  if(w){
-    el.innerHTML = "BMI 자동계산 — <b>"+bmiOf(w).toFixed(1)+"</b> (신장 165cm 기준)";
-  } else {
-    el.textContent = "BMI 자동계산 — 체중 입력 시 표시됩니다 (신장 165cm 고정)";
-  }
-}
-document.getElementById("i_w").addEventListener("input", updateBmiPreview);
 
 function loadVitalsForDate(d){
   var e = findBody(d);
@@ -556,7 +536,6 @@ function loadVitalsForDate(d){
   document.getElementById("i_bmr").value = e && e.bmr!=null ? e.bmr : "";
   document.getElementById("i_sys").value = e && e.bpSys!=null ? e.bpSys : "";
   document.getElementById("i_dia").value = e && e.bpDia!=null ? e.bpDia : "";
-  updateBmiPreview();
 }
 document.getElementById("saveVitals").addEventListener("click", function(){
   var d = curDate();
@@ -850,14 +829,6 @@ function bodySeriesForKey(key, dim){
   }
   return arr;
 }
-function bmiSeries(dim){
-  var arr=[];
-  for(var d=1; d<=dim; d++){
-    var e=findBody(dstr(view.y,view.m,d));
-    arr.push(e && e.weight!=null ? bmiOf(e.weight) : null);
-  }
-  return arr;
-}
 
 function renderLineCharts(){
   var dim = daysInMonth(view.y,view.m);
@@ -871,9 +842,6 @@ function renderLineCharts(){
     {value:30,   color:"#4C5FD5", label:"근육 목표 30"}
   ]});
   document.getElementById("bodyChartWrap").innerHTML = bodySvg || '<div class="empty-note">이번 달 체성분 기록이 없습니다</div>';
-
-  var bmiSvg = buildLineSvg([{data:bmiSeries(dim), color:"#F2A900"}], dim, {target:23.0, targetColor:"#F2A900"});
-  document.getElementById("bmiChartWrap").innerHTML = bmiSvg || '<div class="empty-note">체중을 입력하면 BMI 추이가 표시됩니다</div>';
 
   var bmrSvg = buildLineSvg([{data:bodySeriesForKey("bmr",dim), color:"#2F3E85"}], dim, {});
   document.getElementById("bmrChartWrap").innerHTML = bmrSvg || '<div class="empty-note">이번 달 기초대사량 기록이 없습니다</div>';
@@ -897,7 +865,7 @@ function renderGoalStatus(){
   var wPill = document.getElementById("goalWeightPill");
   if(latest && latest.weight!=null){
     var w = latest.weight;
-    wVal.textContent = w.toFixed(1)+" kg  ("+latest.date+" 기준)";
+    wVal.innerHTML = w.toFixed(1)+" kg <span class=\"gsub\">("+latest.date+" 기준)</span>";
     if(w<=63 && w>=62){ wPill.className="gpill good"; wPill.textContent="목표 구간 도달"; }
     else if(w<62){ wPill.className="gpill good"; wPill.textContent="목표 아래 -"+(62-w).toFixed(1)+"kg"; }
     else{ wPill.className="gpill warn"; wPill.textContent="목표까지 -"+(w-63).toFixed(1)+"kg"; }
@@ -910,7 +878,7 @@ function renderGoalStatus(){
   var mPill = document.getElementById("goalMusclePill");
   if(latest && latest.smm!=null){
     var m = latest.smm;
-    mVal.textContent = m.toFixed(1)+" kg  ("+latest.date+" 기준)";
+    mVal.innerHTML = m.toFixed(1)+" kg <span class=\"gsub\">("+latest.date+" 기준)</span>";
     if(m>=30){ mPill.className="gpill good"; mPill.textContent="목표 유지 중"; }
     else if(m>=29){ mPill.className="gpill warn"; mPill.textContent="주의 -"+(30-m).toFixed(1)+"kg"; }
     else{ mPill.className="gpill bad"; mPill.textContent="경고 -"+(30-m).toFixed(1)+"kg"; }
