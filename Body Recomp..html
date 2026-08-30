@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Body Recomp. — by superbisheng</title>
+<style>
+:root{
+  --bg:#EEF1F4;
+  --frame:#E2E7EC;
+  --card:#FFFFFF;
+  --card-soft:#F7F9FB;
+  --ink:#16212E;
+  --sub:#5C6B79;
+  --faint:#9AA7B2;
+  --line:#E7EBEF;
+
+  --blue:#0078C8;
+  --blue-dk:#025C9E;
+  --orange:#FF8A00;
+  --red:#E5384F;
+  --red-soft:#FDE7EA;
+  --green:#1FAE6E;
+  --green-soft:#E4F6EE;
+
+  --c-weight:#00B295;
+  --c-smm:#4C5FD5;
+  --c-fm:#FF6B5B;
+  --c-bmi:#F2A900;
+  --c-bmr:#2F3E85;
+  --c-sys:#6C4FF6;
+  --c-dia:#C9B8FE;
+
+  --soju:#00A651;
+  --beer:#F2A900;
+  --somaek:#D6336C;
+  --etc:#8C98A5;
+
+  --sans:-apple-system,BlinkMacSystemFont,"Pretendard","Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",system-ui,sans-serif;
+  --mono:ui-monospace,"SF Mono","Roboto Mono",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--frame);
+  color:var(--ink);
+  font-family:var(--sans);
+  -webkit-font-smoothing:antialiased;
+  font-variant-numeric:tabular-nums;
+}
+.app{
+  max-width:480px;margin:0 auto;background:var(--bg);
+  min-height:100vh;padding:0 0 40px;
+}
+@media(min-width:481px){
+  body{padding:24px 0;}
+  .app{border-radius:28px;box-shadow:0 20px 60px rgba(20,30,45,.18);overflow:hidden;min-height:auto;}
+}
+
+header{
+  background:linear-gradient(135deg,var(--blue) 0%,var(--blue-dk) 100%);
+  color:#fff;padding:20px 18px 22px;position:relative;overflow:hidden;
+}
+header::after{
+  content:"";position:absolute;right:-40px;top:-60px;width:180px;height:180px;
+  border-radius:50%;background:rgba(255,255,255,.08);
+}
+.wordmark-row{display:flex;align-items:baseline;gap:9px;margin:0 0 2px;flex-wrap:wrap;}
+.wordmark-main{font-size:19px;font-weight:800;letter-spacing:.01em;color:#fff;}
+.wordmark-by{font-size:10px;font-weight:600;letter-spacing:.04em;color:rgba(255,255,255,.65);}
+.today-date{font-size:22px;font-weight:800;letter-spacing:-.01em;margin:0 0 16px;}
+.today-chips{display:flex;gap:8px;position:relative;z-index:1;}
+.chip-stat{
+  flex:1;background:rgba(255,255,255,.14);border-radius:12px;padding:9px 10px;
+}
+.chip-stat .l{font-size:10px;font-weight:700;letter-spacing:.06em;opacity:.8;}
+.chip-stat .v{font-size:16px;font-weight:800;margin-top:1px;}
+
+.sec{padding:16px 16px 0;}
+.card{
+  background:var(--card);border-radius:18px;padding:16px;
+  box-shadow:0 1px 3px rgba(20,30,45,.06);margin-bottom:14px;
+}
+.eyebrow{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin:0 0 4px;}
+.subhead{
+  font-size:13px;font-weight:800;color:var(--ink);margin:18px 0 10px;
+  display:flex;align-items:center;gap:6px;
+}
+.subhead:first-of-type{margin-top:2px;}
+
+.form-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;}
+.form-head input[type=date]{
+  font-family:var(--mono);font-size:13px;font-weight:700;color:var(--ink);
+  border:1px solid var(--line);background:var(--card-soft);border-radius:9px;padding:7px 9px;
+}
+
+/* ---------- activity add widgets ---------- */
+.addrow{margin-bottom:14px;}
+.addrow-top{display:flex;gap:8px;align-items:center;}
+.addrow-top input[type=number]{
+  flex:1;font-family:var(--mono);font-size:17px;font-weight:800;color:var(--ink);
+  border:1.5px solid var(--line);border-radius:12px;padding:10px 11px;background:var(--card-soft);
+  min-width:0;
+}
+.addrow-top input:focus{outline:none;border-color:var(--blue);background:#fff;}
+.addbtn{
+  font-size:13px;font-weight:800;color:#fff;background:var(--ink);border:none;
+  border-radius:12px;padding:0 16px;height:42px;cursor:pointer;white-space:nowrap;
+}
+.chips{display:flex;gap:6px;margin-top:7px;}
+.chip{
+  font-family:var(--mono);font-size:12px;font-weight:700;color:var(--blue-dk);
+  background:#E7F2FA;border:none;border-radius:20px;padding:6px 12px;cursor:pointer;
+}
+.chip.orange{color:#B85E00;background:#FFF1E0;}
+.chip:active{filter:brightness(.95);}
+
+.loglist{margin-top:9px;display:flex;flex-direction:column;gap:6px;}
+.logitem{
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--card-soft);border-radius:10px;padding:8px 10px;
+  font-size:13px;font-weight:700;
+}
+.logitem .x{
+  width:22px;height:22px;border-radius:50%;border:none;background:#E7EBEF;color:var(--sub);
+  font-size:13px;font-weight:800;cursor:pointer;line-height:22px;text-align:center;padding:0;
+}
+.sumline{
+  margin-top:8px;font-size:13px;font-weight:800;color:var(--ink);
+  background:var(--card-soft);border-radius:10px;padding:9px 11px;
+}
+.sumline b{font-family:var(--mono);}
+.sumline.empty{color:var(--faint);font-weight:600;}
+
+/* drink type picker */
+.drinkTypes{display:flex;gap:6px;margin-bottom:9px;}
+.dtBtn{
+  flex:1;font-size:12.5px;font-weight:800;padding:9px 0;border-radius:11px;
+  border:1.5px solid var(--line);background:var(--card-soft);color:var(--sub);cursor:pointer;
+}
+.dtBtn.sel-soju{background:#E6F7EC;border-color:var(--soju);color:var(--soju);}
+.dtBtn.sel-beer{background:#FFF7E2;border-color:var(--beer);color:#8A6300;}
+.dtBtn.sel-somaek{background:#FCE6EE;border-color:var(--somaek);color:var(--somaek);}
+.dtBtn.sel-etc{background:#EEF0F2;border-color:var(--etc);color:var(--etc);}
+
+/* body vitals */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.f{display:flex;flex-direction:column;gap:5px;}
+.f label{font-size:11.5px;font-weight:700;color:var(--sub);}
+.f input{
+  font-family:var(--mono);font-size:15px;font-weight:700;color:var(--ink);
+  border:1.5px solid var(--line);border-radius:10px;padding:9px 10px;background:var(--card-soft);
+}
+.f input:focus{outline:none;border-color:var(--blue);background:#fff;}
+.bmiPreview{
+  margin-top:14px;background:#FFF7E6;border:1px dashed var(--c-bmi);border-radius:12px;
+  padding:10px 12px;font-size:12.5px;color:#8A6300;font-weight:700;
+}
+.bmiPreview b{font-family:var(--mono);font-size:15px;}
+.saveBtn{
+  width:100%;margin-top:16px;padding:14px;border:none;border-radius:14px;
+  background:var(--ink);color:#fff;font-size:15px;font-weight:800;letter-spacing:.02em;cursor:pointer;
+}
+.saveBtn:active{background:#0B1420;}
+.status{font-family:var(--mono);font-size:11.5px;color:var(--sub);margin-top:10px;min-height:14px;text-align:center;}
+
+/* month nav */
+.monthbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;}
+.mbtn{
+  width:36px;height:36px;border-radius:10px;border:1.5px solid var(--line);background:var(--card-soft);
+  font-size:16px;font-weight:800;color:var(--ink);cursor:pointer;
+}
+.mlabel{font-size:16px;font-weight:800;letter-spacing:-.01em;cursor:pointer;}
+.mlabel small{display:block;font-size:10.5px;font-weight:700;color:var(--faint);letter-spacing:.08em;margin-top:1px;}
+
+/* calendar */
+.calwd{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin:12px 0 5px;}
+.calwd span{text-align:center;font-size:10px;font-weight:800;color:var(--faint);}
+.calgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+.calcell{
+  aspect-ratio:1;border-radius:9px;background:var(--card-soft);position:relative;
+  display:flex;align-items:flex-start;justify-content:flex-start;padding:4px 5px;
+  font-family:var(--mono);font-size:11px;font-weight:700;color:var(--sub);cursor:pointer;
+  border:1.5px solid transparent;
+}
+.calcell.blank{background:transparent;cursor:default;}
+.calcell.today{border-color:var(--blue);}
+.calcell.body-log{box-shadow:inset 0 2px 0 var(--c-weight);}
+.dots{position:absolute;bottom:4px;left:5px;display:flex;gap:2px;}
+.dots i{width:5px;height:5px;border-radius:50%;display:block;}
+.calcell.drank{background:var(--red-soft);}
+.calempty{text-align:center;font-size:12px;color:var(--faint);padding:14px 0 4px;}
+
+/* kpi row */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.kpi{background:var(--card-soft);border-radius:12px;padding:10px 6px;text-align:center;}
+.kpi .ic{font-size:15px;}
+.kpi .v{font-family:var(--mono);font-size:15px;font-weight:800;margin-top:2px;}
+.kpi .k{font-size:9.5px;color:var(--faint);font-weight:700;margin-top:1px;}
+
+/* goal status */
+.goalrow{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);}
+.goalrow:last-of-type{border-bottom:none;}
+.goalrow .gi{font-size:21px;width:28px;text-align:center;flex-shrink:0;}
+.goalrow .gtxt{flex:1;min-width:0;}
+.goalrow .gtxt .glabel{font-size:11.5px;color:var(--sub);font-weight:700;}
+.goalrow .gtxt .gval{font-family:var(--mono);font-size:17px;font-weight:800;margin-top:1px;}
+.gpill{font-size:10.5px;font-weight:800;padding:5px 10px;border-radius:20px;white-space:nowrap;flex-shrink:0;}
+.gpill.good{background:var(--green-soft);color:var(--green);}
+.gpill.warn{background:#FFF3DC;color:#B85E00;}
+.gpill.bad{background:var(--red-soft);color:var(--red);}
+.gpill.neutral{background:var(--card-soft);color:var(--faint);}
+.streaks{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;}
+.streak{background:var(--card-soft);border-radius:12px;padding:10px 8px;text-align:center;}
+.streak .si{font-size:16px;}
+.streak .sv{font-family:var(--mono);font-size:17px;font-weight:800;margin-top:2px;}
+.streak .sl{font-size:9.5px;color:var(--faint);font-weight:700;margin-top:1px;}
+
+/* drink breakdown */
+.dbk{display:flex;flex-direction:column;gap:9px;}
+.dbk-row{display:grid;grid-template-columns:52px 1fr 44px;align-items:center;gap:9px;}
+.dbk-row .n{font-size:12.5px;font-weight:800;}
+.dbk-row .bar{height:10px;border-radius:5px;background:var(--card-soft);overflow:hidden;}
+.dbk-row .bar i{display:block;height:100%;width:0;border-radius:5px;transition:width .6s ease;}
+.dbk-row .v{font-family:var(--mono);font-size:12px;font-weight:800;text-align:right;}
+
+/* charts */
+.chart-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.chart-title{font-size:13.5px;font-weight:800;display:flex;align-items:center;gap:6px;}
+.chart-title i{width:9px;height:9px;border-radius:50%;display:inline-block;}
+.chart-max{font-family:var(--mono);font-size:11px;color:var(--faint);}
+.bars{display:flex;align-items:flex-end;gap:2px;height:110px;}
+.barcol{flex:1;height:100%;display:flex;align-items:flex-end;}
+.barfill{width:100%;border-radius:3px 3px 0 0;height:2%;transition:height .6s ease;}
+.chart-xaxis{display:flex;justify-content:space-between;margin-top:6px;font-family:var(--mono);font-size:10px;color:var(--faint);}
+.legend{display:flex;gap:14px;margin-bottom:8px;flex-wrap:wrap;}
+.legend span{display:flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;color:var(--sub);}
+.legend i{width:8px;height:8px;border-radius:50%;display:inline-block;}
+.linechart{width:100%;height:auto;display:block;}
+.empty-note{font-size:12px;color:var(--faint);padding:10px 0;text-align:center;}
+
+footer{padding:18px 20px 4px;font-family:var(--mono);font-size:10px;color:var(--faint);line-height:1.7;text-align:center;}
+@media(prefers-reduced-motion:reduce){*{transition:none !important;}}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header>
+    <div class="wordmark-row">
+      <span class="wordmark-main">Body Recomp.</span>
+      <span class="wordmark-by">by superbisheng</span>
+    </div>
+    <h1 class="today-date" id="todayLabel">—</h1>
+    <div class="today-chips">
+      <div class="chip-stat"><div class="l">🏃 오늘 러닝</div><div class="v" id="todayRun">-</div></div>
+      <div class="chip-stat"><div class="l">💪 오늘 푸시업</div><div class="v" id="todayPush">-</div></div>
+      <div class="chip-stat"><div class="l">🍺 오늘 음주</div><div class="v" id="todayAlc">-</div></div>
+    </div>
+  </header>
+
+  <!-- ===== 목표 현황 ===== -->
+  <div class="sec">
+    <div class="card">
+      <p class="eyebrow">🎯 목표 현황</p>
+      <div class="goalrow" id="goalWeightRow">
+        <div class="gi">⚖️</div>
+        <div class="gtxt"><div class="glabel">체중 · 목표 62~63kg</div><div class="gval" id="goalWeightVal">-</div></div>
+        <div class="gpill neutral" id="goalWeightPill">기록 없음</div>
+      </div>
+      <div class="goalrow" id="goalMuscleRow">
+        <div class="gi">💪</div>
+        <div class="gtxt"><div class="glabel">골격근량 · 목표 30kg 이상</div><div class="gval" id="goalMuscleVal">-</div></div>
+        <div class="gpill neutral" id="goalMusclePill">기록 없음</div>
+      </div>
+      <div class="streaks">
+        <div class="streak"><div class="si">🔥</div><div class="sv" id="streakRun">0일</div><div class="sl">연속 러닝</div></div>
+        <div class="streak"><div class="si">🚫🍺</div><div class="sv" id="streakNoDrink">0일</div><div class="sl">무음주 연속</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 날짜 선택 + 활동 기록 ===== -->
+  <div class="sec">
+    <div class="card">
+      <div class="form-head">
+        <p class="eyebrow">기록할 날짜</p>
+        <input type="date" id="i_date">
+      </div>
+
+      <div class="subhead">🏃 달리기 — 여러 번 기록 가능</div>
+      <div class="addrow">
+        <div class="addrow-top">
+          <input type="number" step="0.01" id="i_run_val" placeholder="예: 3.0 km" inputmode="decimal">
+          <button type="button" class="addbtn" id="addRun">추가</button>
+        </div>
+        <div class="chips">
+          <button type="button" class="chip" data-quick="run" data-v="1">+1km</button>
+          <button type="button" class="chip" data-quick="run" data-v="3">+3km</button>
+          <button type="button" class="chip" data-quick="run" data-v="5">+5km</button>
+        </div>
+        <div class="loglist" id="runLogList"></div>
+        <div class="sumline" id="runLogSum">아직 기록이 없습니다</div>
+      </div>
+
+      <div class="subhead">💪 푸시업 — 여러 번 기록 가능</div>
+      <div class="addrow">
+        <div class="addrow-top">
+          <input type="number" id="i_push_val" placeholder="예: 20개" inputmode="numeric">
+          <button type="button" class="addbtn" id="addPush">추가</button>
+        </div>
+        <div class="chips">
+          <button type="button" class="chip orange" data-quick="push" data-v="10">+10</button>
+          <button type="button" class="chip orange" data-quick="push" data-v="20">+20</button>
+          <button type="button" class="chip orange" data-quick="push" data-v="30">+30</button>
+        </div>
+        <div class="loglist" id="pushLogList"></div>
+        <div class="sumline" id="pushLogSum">아직 기록이 없습니다</div>
+      </div>
+
+      <div class="subhead">🍺 음주 — 종류별로 기록</div>
+      <div class="addrow">
+        <div class="drinkTypes">
+          <button type="button" class="dtBtn" data-dt="소주" id="dtSoju">소주</button>
+          <button type="button" class="dtBtn" data-dt="맥주" id="dtBeer">맥주</button>
+          <button type="button" class="dtBtn" data-dt="소맥" id="dtSomaek">소맥</button>
+          <button type="button" class="dtBtn" data-dt="기타" id="dtEtc">기타</button>
+        </div>
+        <div class="addrow-top">
+          <input type="number" id="i_drink_glasses" placeholder="몇 잔" inputmode="numeric">
+          <button type="button" class="addbtn" id="addDrink">추가</button>
+        </div>
+        <div class="loglist" id="drinkLogList"></div>
+        <div class="sumline" id="drinkLogSum">아직 기록이 없습니다</div>
+      </div>
+
+      <div class="status" id="status"></div>
+    </div>
+  </div>
+
+  <!-- ===== 아침 측정 ===== -->
+  <div class="sec">
+    <div class="card">
+      <p class="eyebrow">⚖️ 아침 측정 — 위에서 고른 날짜 기준</p>
+      <div class="grid2">
+        <div class="f"><label>체중 kg</label><input type="number" step="0.1" id="i_w" placeholder="69.8"></div>
+        <div class="f"><label>골격근량 kg</label><input type="number" step="0.1" id="i_smm" placeholder="29.3"></div>
+        <div class="f"><label>체지방량 kg</label><input type="number" step="0.1" id="i_fm" placeholder="15.5"></div>
+        <div class="f"><label>기초대사량 kcal</label><input type="number" id="i_bmr" placeholder="1542"></div>
+        <div class="f"><label>혈압 수축기</label><input type="number" id="i_sys" placeholder="118"></div>
+        <div class="f"><label>혈압 이완기</label><input type="number" id="i_dia" placeholder="76"></div>
+      </div>
+      <div class="bmiPreview" id="bmiPreview">BMI 자동계산 — 체중 입력 시 표시됩니다 (신장 165cm 고정)</div>
+      <button class="saveBtn" id="saveVitals">아침 측정 저장</button>
+    </div>
+  </div>
+
+  <!-- ===== 월별 캘린더 ===== -->
+  <div class="sec">
+    <div class="card">
+      <div class="monthbar">
+        <button class="mbtn" id="prevM">‹</button>
+        <div class="mlabel" id="monthLabel">—<small>탭하면 오늘로 이동</small></div>
+        <button class="mbtn" id="nextM">›</button>
+      </div>
+      <div class="calwd"><span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span></div>
+      <div class="calgrid" id="calGrid"></div>
+      <div id="calEmptyNote"></div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">이번 달 요약</p>
+      <div class="kpis">
+        <div class="kpi"><div class="ic">🏃</div><div class="v" id="sumRun">-</div><div class="k">총 러닝 km</div></div>
+        <div class="kpi"><div class="ic">💪</div><div class="v" id="sumPush">-</div><div class="k">총 푸시업</div></div>
+        <div class="kpi"><div class="ic">🍺</div><div class="v" id="sumDrink">-</div><div class="k">총 음주 잔</div></div>
+        <div class="kpi"><div class="ic">⚖️</div><div class="v" id="sumDelta">-</div><div class="k">체중 변화</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">이번 달 음주 구성</p>
+      <div class="dbk" id="drinkBreakdown"></div>
+    </div>
+  </div>
+
+  <!-- ===== 주간 누적 추이 ===== -->
+  <div class="sec">
+    <div class="card">
+      <p class="eyebrow">📅 주간 누적 추이 (최근 8주 · 월요일 시작)</p>
+      <div class="chart-head" style="margin-top:12px">
+        <span class="chart-title"><i style="background:var(--blue)"></i>러닝 주간 합계</span>
+        <span class="chart-max" id="wkRunMax">-</span>
+      </div>
+      <div class="bars" id="wkRunBars"></div>
+      <div class="chart-xaxis"><span id="wkRunFirst">-</span><span>이번주</span></div>
+
+      <div class="chart-head" style="margin-top:20px">
+        <span class="chart-title"><i style="background:var(--orange)"></i>푸시업 주간 합계</span>
+        <span class="chart-max" id="wkPushMax">-</span>
+      </div>
+      <div class="bars" id="wkPushBars"></div>
+      <div class="chart-xaxis"><span id="wkPushFirst">-</span><span>이번주</span></div>
+
+      <div class="chart-head" style="margin-top:20px">
+        <span class="chart-title"><i style="background:var(--red)"></i>음주 주간 합계 (잔)</span>
+        <span class="chart-max" id="wkDrinkMax">-</span>
+      </div>
+      <div class="bars" id="wkDrinkBars"></div>
+      <div class="chart-xaxis"><span id="wkDrinkFirst">-</span><span>이번주</span></div>
+    </div>
+  </div>
+
+  <!-- ===== 막대그래프 (이번 달 일별) ===== -->
+  <div class="sec">
+    <div class="card">
+      <div class="chart-head">
+        <span class="chart-title"><i style="background:var(--blue)"></i>달리기 거리 (일별 합계)</span>
+        <span class="chart-max" id="runChartMax">-</span>
+      </div>
+      <div class="bars" id="runBars"></div>
+      <div class="chart-xaxis"><span>1일</span><span id="runMidLabel">-</span><span id="runLastLabel">-</span></div>
+    </div>
+
+    <div class="card">
+      <div class="chart-head">
+        <span class="chart-title"><i style="background:var(--orange)"></i>푸시업 (일별 합계)</span>
+        <span class="chart-max" id="pushChartMax">-</span>
+      </div>
+      <div class="bars" id="pushBars"></div>
+      <div class="chart-xaxis"><span>1일</span><span id="pushMidLabel">-</span><span id="pushLastLabel">-</span></div>
+    </div>
+  </div>
+
+  <!-- ===== 꺾은선그래프 ===== -->
+  <div class="sec">
+    <div class="card">
+      <p class="eyebrow">체성분 추이</p>
+      <div class="legend">
+        <span><i style="background:var(--c-weight)"></i>체중</span>
+        <span><i style="background:var(--c-smm)"></i>골격근량</span>
+        <span><i style="background:var(--c-fm)"></i>체지방량</span>
+      </div>
+      <div id="bodyChartWrap"></div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">BMI 추이 <span style="color:var(--faint);font-weight:600">(체중 기반 자동계산)</span></p>
+      <div id="bmiChartWrap"></div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">기초대사량 추이</p>
+      <div id="bmrChartWrap"></div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">혈압 추이</p>
+      <div class="legend">
+        <span><i style="background:var(--c-sys)"></i>수축기</span>
+        <span><i style="background:var(--c-dia)"></i>이완기</span>
+      </div>
+      <div id="bpChartWrap"></div>
+    </div>
+  </div>
+
+  <footer>
+    Body Recomp. · by superbisheng · 개인 계정에 저장<br>
+    러닝·푸시업·음주는 하루에 여러 번 기록되며 자동 합산됩니다
+  </footer>
+
+</div>
+
+<script>
+(function(){
+"use strict";
+var HEIGHT_M = 1.65;
+var KEY = "stride:data";
+var bodyMem = [];   // {date, weight, smm, fm, bmr, bpSys, bpDia}
+var logMem = [];    // {id, date, kind:'run'|'push'|'drink', km?, count?, drinkType?, glasses?}
+var usingStorage = true;
+var view = { y:2026, m:7 };
+var selectedDrinkType = null;
+
+function pad2(n){ return n<10 ? ("0"+n) : (""+n); }
+function dstr(y,m,d){ return y+"-"+pad2(m+1)+"-"+pad2(d); }
+function daysInMonth(y,m){ return new Date(y,m+1,0).getDate(); }
+function todayObj(){ var t=new Date(); return {y:t.getFullYear(), m:t.getMonth(), d:t.getDate()}; }
+function monthLabelStr(y,m){ return y+"년 "+(m+1)+"월"; }
+function genId(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+
+var TODAY = todayObj();
+var TODAY_STR = dstr(TODAY.y,TODAY.m,TODAY.d);
+
+function curDate(){ return document.getElementById("i_date").value || TODAY_STR; }
+function findBody(d){ for(var i=0;i<bodyMem.length;i++){ if(bodyMem[i].date===d) return bodyMem[i]; } return null; }
+function bmiOf(w){ return w ? (w/(HEIGHT_M*HEIGHT_M)) : null; }
+function num(id){ var v=document.getElementById(id).value; return v===""? null : parseFloat(v); }
+
+function seed(){
+  bodyMem = [{date:"2026-08-30", weight:69.8, smm:29.3, fm:15.5, bmr:1542, bpSys:null, bpDia:null}];
+  logMem = [{id:genId(), date:"2026-08-30", kind:"run", km:4.0}];
+}
+
+/* ---------- persistence ---------- */
+function load(){
+  if(typeof window.storage==="undefined"){
+    usingStorage=false; seed(); afterLoad("세션 메모리로 동작 중 — 새로고침 시 초기화됩니다.");
+    return;
+  }
+  window.storage.get(KEY,false).then(function(r){
+    try{
+      var parsed = JSON.parse(r.value)||{};
+      bodyMem = parsed.body||[]; logMem = parsed.logs||[];
+    }catch(e){ bodyMem=[]; logMem=[]; }
+    if(!bodyMem.length && !logMem.length) seed();
+    afterLoad("저장된 기록 불러옴 · 로그 "+logMem.length+"건");
+  }).catch(function(){
+    seed(); afterLoad("새 기록장을 시작합니다");
+  });
+}
+function persist(msg){
+  renderAll();
+  if(!usingStorage || typeof window.storage==="undefined"){
+    setStatus("저장됨 (세션 한정)"); return;
+  }
+  window.storage.set(KEY, JSON.stringify({body:bodyMem, logs:logMem}), false).then(function(){
+    setStatus(msg || "저장 완료");
+  }).catch(function(){ setStatus("저장 실패 — 네트워크를 확인하세요"); });
+}
+function afterLoad(msg){
+  document.getElementById("i_date").value = TODAY_STR;
+  view.y = TODAY.y; view.m = TODAY.m;
+  renderAll();
+  setStatus(msg);
+}
+function setStatus(t){ document.getElementById("status").textContent = t; }
+
+/* ---------- vitals form ---------- */
+function updateBmiPreview(){
+  var w = num("i_w");
+  var el = document.getElementById("bmiPreview");
+  if(w){
+    el.innerHTML = "BMI 자동계산 — <b>"+bmiOf(w).toFixed(1)+"</b> (신장 165cm 기준)";
+  } else {
+    el.textContent = "BMI 자동계산 — 체중 입력 시 표시됩니다 (신장 165cm 고정)";
+  }
+}
+document.getElementById("i_w").addEventListener("input", updateBmiPreview);
+
+function loadVitalsForDate(d){
+  var e = findBody(d);
+  document.getElementById("i_w").value = e && e.weight!=null ? e.weight : "";
+  document.getElementById("i_smm").value = e && e.smm!=null ? e.smm : "";
+  document.getElementById("i_fm").value = e && e.fm!=null ? e.fm : "";
+  document.getElementById("i_bmr").value = e && e.bmr!=null ? e.bmr : "";
+  document.getElementById("i_sys").value = e && e.bpSys!=null ? e.bpSys : "";
+  document.getElementById("i_dia").value = e && e.bpDia!=null ? e.bpDia : "";
+  updateBmiPreview();
+}
+document.getElementById("saveVitals").addEventListener("click", function(){
+  var d = curDate();
+  var e = {date:d, weight:num("i_w"), smm:num("i_smm"), fm:num("i_fm"),
+            bmr:num("i_bmr"), bpSys:num("i_sys"), bpDia:num("i_dia")};
+  bodyMem = bodyMem.filter(function(x){ return x.date!==d; });
+  bodyMem.push(e);
+  persist("아침 측정 저장 완료 · "+d);
+});
+
+document.getElementById("i_date").addEventListener("change", function(){
+  var d = this.value;
+  view.y = parseInt(d.slice(0,4),10); view.m = parseInt(d.slice(5,7),10)-1;
+  renderAll();
+});
+
+/* ---------- run / pushup logs ---------- */
+function addRunLog(km){
+  if(!km || km<=0){ setStatus("달리기 거리를 입력해주세요"); return; }
+  logMem.push({id:genId(), date:curDate(), kind:"run", km:Math.round(km*100)/100});
+  document.getElementById("i_run_val").value="";
+  persist("러닝 "+km+"km 추가됨");
+}
+function addPushLog(cnt){
+  if(!cnt || cnt<=0){ setStatus("푸시업 개수를 입력해주세요"); return; }
+  logMem.push({id:genId(), date:curDate(), kind:"push", count:Math.round(cnt)});
+  document.getElementById("i_push_val").value="";
+  persist("푸시업 "+cnt+"개 추가됨");
+}
+document.getElementById("addRun").addEventListener("click", function(){
+  addRunLog(parseFloat(document.getElementById("i_run_val").value));
+});
+document.getElementById("addPush").addEventListener("click", function(){
+  addPushLog(parseFloat(document.getElementById("i_push_val").value));
+});
+document.querySelectorAll('.chip[data-quick]').forEach(function(btn){
+  btn.addEventListener("click", function(){
+    var v = parseFloat(btn.dataset.v);
+    if(btn.dataset.quick==="run") addRunLog(v); else addPushLog(v);
+  });
+});
+
+/* ---------- drink logs ---------- */
+function setDrinkType(t){
+  selectedDrinkType = t;
+  var map = {"소주":"dtSoju","맥주":"dtBeer","소맥":"dtSomaek","기타":"dtEtc"};
+  var clsMap = {"소주":"sel-soju","맥주":"sel-beer","소맥":"sel-somaek","기타":"sel-etc"};
+  ["소주","맥주","소맥","기타"].forEach(function(k){
+    var el = document.getElementById(map[k]);
+    el.className = "dtBtn" + (k===t ? " "+clsMap[k] : "");
+  });
+}
+document.querySelectorAll(".dtBtn").forEach(function(btn){
+  btn.addEventListener("click", function(){
+    setDrinkType(selectedDrinkType===btn.dataset.dt ? null : btn.dataset.dt);
+  });
+});
+document.getElementById("addDrink").addEventListener("click", function(){
+  var glasses = parseFloat(document.getElementById("i_drink_glasses").value);
+  if(!selectedDrinkType){ setStatus("술 종류를 먼저 선택해주세요"); return; }
+  if(!glasses || glasses<=0){ setStatus("몇 잔인지 입력해주세요"); return; }
+  logMem.push({id:genId(), date:curDate(), kind:"drink", drinkType:selectedDrinkType, glasses:Math.round(glasses*10)/10});
+  document.getElementById("i_drink_glasses").value="";
+  setDrinkType(null);
+  persist(selectedDrinkType+" "+glasses+"잔 추가됨");
+});
+
+/* ---------- delete a log ---------- */
+function deleteLog(id){
+  logMem = logMem.filter(function(x){ return x.id!==id; });
+  persist("삭제됨");
+}
+
+/* ---------- render: today's log lists for selected date ---------- */
+function renderDateLogs(){
+  var d = curDate();
+  var dayLogs = logMem.filter(function(x){ return x.date===d; });
+
+  var runs = dayLogs.filter(function(x){ return x.kind==="run"; });
+  var runHtml = runs.map(function(x){
+    return '<div class="logitem"><span>'+x.km.toFixed(2)+' km</span><button class="x" data-del="'+x.id+'">×</button></div>';
+  }).join("");
+  document.getElementById("runLogList").innerHTML = runHtml;
+  var runSum = runs.reduce(function(s,x){ return s+x.km; },0);
+  var runSumEl = document.getElementById("runLogSum");
+  if(runs.length){ runSumEl.className="sumline"; runSumEl.innerHTML = d+" 합계 — <b>"+runSum.toFixed(2)+" km</b> ("+runs.length+"회)"; }
+  else { runSumEl.className="sumline empty"; runSumEl.textContent="아직 기록이 없습니다"; }
+
+  var pushes = dayLogs.filter(function(x){ return x.kind==="push"; });
+  var pushHtml = pushes.map(function(x){
+    return '<div class="logitem"><span>'+x.count+' 개</span><button class="x" data-del="'+x.id+'">×</button></div>';
+  }).join("");
+  document.getElementById("pushLogList").innerHTML = pushHtml;
+  var pushSum = pushes.reduce(function(s,x){ return s+x.count; },0);
+  var pushSumEl = document.getElementById("pushLogSum");
+  if(pushes.length){ pushSumEl.className="sumline"; pushSumEl.innerHTML = d+" 합계 — <b>"+pushSum+" 개</b> ("+pushes.length+"회)"; }
+  else { pushSumEl.className="sumline empty"; pushSumEl.textContent="아직 기록이 없습니다"; }
+
+  var drinks = dayLogs.filter(function(x){ return x.kind==="drink"; });
+  var drinkHtml = drinks.map(function(x){
+    return '<div class="logitem"><span>'+x.drinkType+' '+x.glasses+'잔</span><button class="x" data-del="'+x.id+'">×</button></div>';
+  }).join("");
+  document.getElementById("drinkLogList").innerHTML = drinkHtml;
+  var drinkSum = drinks.reduce(function(s,x){ return s+x.glasses; },0);
+  var drinkSumEl = document.getElementById("drinkLogSum");
+  if(drinks.length){
+    var byType = {};
+    drinks.forEach(function(x){ byType[x.drinkType] = (byType[x.drinkType]||0)+x.glasses; });
+    var parts = Object.keys(byType).map(function(k){ return k+" "+byType[k]+"잔"; }).join(" · ");
+    drinkSumEl.className="sumline"; drinkSumEl.innerHTML = d+" 합계 — <b>"+drinkSum+"잔</b> ("+parts+")";
+  } else { drinkSumEl.className="sumline empty"; drinkSumEl.textContent="아직 기록이 없습니다"; }
+
+  document.querySelectorAll("[data-del]").forEach(function(btn){
+    btn.addEventListener("click", function(){ deleteLog(btn.dataset.del); });
+  });
+
+  loadVitalsForDate(d);
+}
+
+/* ---------- render: header (real today, not selected date) ---------- */
+function renderHeader(){
+  var t = new Date();
+  var wd = ["일","월","화","수","목","금","토"][t.getDay()];
+  document.getElementById("todayLabel").textContent =
+    t.getFullYear()+"."+pad2(t.getMonth()+1)+"."+pad2(t.getDate())+" ("+wd+")";
+  var todayLogs = logMem.filter(function(x){ return x.date===TODAY_STR; });
+  var runSum = todayLogs.filter(function(x){return x.kind==="run";}).reduce(function(s,x){return s+x.km;},0);
+  var pushSum = todayLogs.filter(function(x){return x.kind==="push";}).reduce(function(s,x){return s+x.count;},0);
+  var drinkSum = todayLogs.filter(function(x){return x.kind==="drink";}).reduce(function(s,x){return s+x.glasses;},0);
+  document.getElementById("todayRun").textContent = runSum>0 ? runSum.toFixed(2)+" km" : "-";
+  document.getElementById("todayPush").textContent = pushSum>0 ? pushSum+" 개" : "-";
+  document.getElementById("todayAlc").textContent = drinkSum>0 ? drinkSum+" 잔" : "-";
+}
+
+/* ---------- render: calendar ---------- */
+function renderCalendar(){
+  document.getElementById("monthLabel").innerHTML = monthLabelStr(view.y,view.m)+"<small>탭하면 오늘로 이동</small>";
+  var dim = daysInMonth(view.y,view.m);
+  var startDow = new Date(view.y,view.m,1).getDay();
+  var html = "";
+  for(var i=0;i<startDow;i++){ html += '<div class="calcell blank"></div>'; }
+  var anyEntry = false;
+  for(var d=1; d<=dim; d++){
+    var ds = dstr(view.y,view.m,d);
+    var dayLogs = logMem.filter(function(x){ return x.date===ds; });
+    var hasRun = dayLogs.some(function(x){ return x.kind==="run"; });
+    var hasPush = dayLogs.some(function(x){ return x.kind==="push"; });
+    var hasDrink = dayLogs.some(function(x){ return x.kind==="drink"; });
+    var hasBody = !!findBody(ds);
+    if(dayLogs.length || hasBody) anyEntry = true;
+    var cls = "calcell";
+    if(ds===TODAY_STR) cls += " today";
+    if(hasBody) cls += " body-log";
+    if(hasDrink) cls += " drank";
+    var dots = "";
+    if(hasRun) dots += '<i style="background:var(--blue)"></i>';
+    if(hasPush) dots += '<i style="background:var(--orange)"></i>';
+    html += '<div class="'+cls+'" data-date="'+ds+'">'+d+'<div class="dots">'+dots+'</div></div>';
+  }
+  document.getElementById("calGrid").innerHTML = html;
+  document.getElementById("calEmptyNote").innerHTML = anyEntry ? "" :
+    '<div class="calempty">이번 달 기록이 아직 없습니다</div>';
+  document.querySelectorAll(".calcell[data-date]").forEach(function(cell){
+    cell.addEventListener("click", function(){
+      var ds = cell.dataset.date;
+      document.getElementById("i_date").value = ds;
+      renderDateLogs();
+      window.scrollTo({top:0, behavior:"smooth"});
+    });
+  });
+}
+
+/* ---------- render: month summary + drink breakdown ---------- */
+function monthLogs(){
+  var prefix = view.y+"-"+pad2(view.m+1)+"-";
+  return logMem.filter(function(x){ return x.date.indexOf(prefix)===0; });
+}
+function monthBody(){
+  var prefix = view.y+"-"+pad2(view.m+1)+"-";
+  return bodyMem.filter(function(x){ return x.date.indexOf(prefix)===0; })
+                .sort(function(a,b){ return a.date<b.date?-1:1; });
+}
+function renderMonthStats(){
+  var logs = monthLogs();
+  var totalRun = logs.filter(function(x){return x.kind==="run";}).reduce(function(s,x){return s+x.km;},0);
+  var totalPush = logs.filter(function(x){return x.kind==="push";}).reduce(function(s,x){return s+x.count;},0);
+  var drinks = logs.filter(function(x){return x.kind==="drink";});
+  var totalDrink = drinks.reduce(function(s,x){return s+x.glasses;},0);
+  document.getElementById("sumRun").textContent = logs.length? totalRun.toFixed(1) : "-";
+  document.getElementById("sumPush").textContent = logs.length? totalPush : "-";
+  document.getElementById("sumDrink").textContent = drinks.length? totalDrink+"잔" : "-";
+
+  var weights = monthBody().filter(function(e){return e.weight!=null;}).map(function(e){return e.weight;});
+  if(weights.length>=2){
+    var delta = weights[weights.length-1]-weights[0];
+    document.getElementById("sumDelta").textContent = (delta>=0?"+":"")+delta.toFixed(1)+"kg";
+  } else { document.getElementById("sumDelta").textContent = "-"; }
+
+  var byType = {"소주":0,"맥주":0,"소맥":0,"기타":0};
+  drinks.forEach(function(x){ byType[x.drinkType] = (byType[x.drinkType]||0)+x.glasses; });
+  var colorMap = {"소주":"var(--soju)","맥주":"var(--beer)","소맥":"var(--somaek)","기타":"var(--etc)"};
+  var maxV = Math.max(1, byType["소주"], byType["맥주"], byType["소맥"], byType["기타"]);
+  var dbkHtml = "";
+  ["소주","맥주","소맥","기타"].forEach(function(k){
+    var w = (byType[k]/maxV)*100;
+    dbkHtml += '<div class="dbk-row"><span class="n">'+k+'</span>'+
+      '<span class="bar"><i style="width:'+w+'%;background:'+colorMap[k]+'"></i></span>'+
+      '<span class="v">'+byType[k]+'잔</span></div>';
+  });
+  document.getElementById("drinkBreakdown").innerHTML = dbkHtml;
+}
+
+/* ---------- render: bar charts ---------- */
+function renderBarChart(barsId, maxId, midId, lastId, kind, valKey, color, unit, minMax){
+  var dim = daysInMonth(view.y,view.m);
+  var vals = [];
+  for(var d=1; d<=dim; d++){
+    var ds = dstr(view.y,view.m,d);
+    var dayLogs = logMem.filter(function(x){ return x.date===ds && x.kind===kind; });
+    var sum = dayLogs.reduce(function(s,x){ return s+x[valKey]; },0);
+    vals.push(dayLogs.length ? sum : null);
+  }
+  var present = vals.filter(function(v){ return v!=null; });
+  var max = present.length ? Math.max.apply(null,present) : minMax;
+  max = Math.max(max, minMax*0.4);
+  var html = "";
+  vals.forEach(function(v){
+    var h = v ? Math.max(4,(v/max*100)) : 2;
+    html += '<div class="barcol"><div class="barfill" style="height:'+h+'%;background:'+color+'"></div></div>';
+  });
+  document.getElementById(barsId).innerHTML = html;
+  document.getElementById(maxId).textContent = present.length ? ("최대 "+Math.max.apply(null,present).toFixed(unit==="km"?2:0)+unit) : "기록 없음";
+  document.getElementById(midId).textContent = Math.ceil(dim/2)+"일";
+  document.getElementById(lastId).textContent = dim+"일";
+}
+
+/* ---------- render: line charts (svg) ---------- */
+function buildLineSvg(seriesList, dim, opts){
+  opts = opts || {};
+  var W=600,H=150,PL=8,PR=8,PT=14,PB=20;
+  var all=[];
+  seriesList.forEach(function(s){ s.data.forEach(function(v){ if(v!=null) all.push(v); }); });
+  var targets = opts.targets || (opts.target!=null ? [{value:opts.target,color:opts.targetColor,label:opts.targetLabel}] : []);
+  targets.forEach(function(t){ all.push(t.value); });
+  if(!all.length){ return null; }
+  var lo=Math.min.apply(null,all), hi=Math.max.apply(null,all);
+  if(lo===hi){ lo-=1; hi+=1; }
+  var pad=(hi-lo)*0.12; lo-=pad; hi+=pad;
+  function X(d){ return dim>1 ? PL + ((d-1)/(dim-1))*(W-PL-PR) : W/2; }
+  function Y(v){ return PT + (1-((v-lo)/(hi-lo)))*(H-PT-PB); }
+
+  var svg = '<svg class="linechart" viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg">';
+  svg += '<line x1="'+PL+'" y1="'+(H-PB)+'" x2="'+(W-PR)+'" y2="'+(H-PB)+'" stroke="#E7EBEF" stroke-width="1"/>';
+
+  targets.forEach(function(t){
+    var ty = Y(t.value);
+    var col = t.color || "#9AA7B2";
+    svg += '<line x1="'+PL+'" y1="'+ty+'" x2="'+(W-PR)+'" y2="'+ty+'" stroke="'+col+'" stroke-width="1.3" stroke-dasharray="4,4"/>';
+    svg += '<text x="'+(W-PR)+'" y="'+(ty-4)+'" text-anchor="end" font-size="9" fill="'+col+'" font-family="ui-monospace,monospace" font-weight="700">'+(t.label||("목표 "+t.value))+'</text>';
+  });
+
+  seriesList.forEach(function(s){
+    var pts=[];
+    for(var d=1; d<=dim; d++){
+      var v = s.data[d-1];
+      if(v!=null) pts.push([X(d),Y(v)]);
+    }
+    if(pts.length>1){
+      var path = pts.map(function(p){ return p[0].toFixed(1)+","+p[1].toFixed(1); }).join(" ");
+      svg += '<polyline points="'+path+'" fill="none" stroke="'+s.color+'" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>';
+    }
+    pts.forEach(function(p){
+      svg += '<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="3.2" fill="'+s.color+'"/>';
+    });
+    if(pts.length===1){
+      svg += '<circle cx="'+pts[0][0].toFixed(1)+'" cy="'+pts[0][1].toFixed(1)+'" r="3.6" fill="'+s.color+'"/>';
+    }
+  });
+
+  svg += '<text x="'+PL+'" y="'+(PT-2)+'" font-size="9.5" fill="#9AA7B2" font-family="ui-monospace,monospace" font-weight="700">'+hi.toFixed(1)+'</text>';
+  svg += '<text x="'+PL+'" y="'+(H-2)+'" font-size="9.5" fill="#9AA7B2" font-family="ui-monospace,monospace" font-weight="700">'+lo.toFixed(1)+'</text>';
+  svg += '</svg>';
+  return svg;
+}
+
+function bodySeriesForKey(key, dim){
+  var arr=[];
+  for(var d=1; d<=dim; d++){
+    var e=findBody(dstr(view.y,view.m,d));
+    arr.push(e && e[key]!=null ? e[key] : null);
+  }
+  return arr;
+}
+function bmiSeries(dim){
+  var arr=[];
+  for(var d=1; d<=dim; d++){
+    var e=findBody(dstr(view.y,view.m,d));
+    arr.push(e && e.weight!=null ? bmiOf(e.weight) : null);
+  }
+  return arr;
+}
+
+function renderLineCharts(){
+  var dim = daysInMonth(view.y,view.m);
+
+  var bodySvg = buildLineSvg([
+    {data:bodySeriesForKey("weight",dim), color:"#00B295"},
+    {data:bodySeriesForKey("smm",dim),    color:"#4C5FD5"},
+    {data:bodySeriesForKey("fm",dim),     color:"#FF6B5B"}
+  ], dim, {targets:[
+    {value:62.5, color:"#00B295", label:"체중 목표 62.5"},
+    {value:30,   color:"#4C5FD5", label:"근육 목표 30"}
+  ]});
+  document.getElementById("bodyChartWrap").innerHTML = bodySvg || '<div class="empty-note">이번 달 체성분 기록이 없습니다</div>';
+
+  var bmiSvg = buildLineSvg([{data:bmiSeries(dim), color:"#F2A900"}], dim, {target:23.0, targetColor:"#F2A900"});
+  document.getElementById("bmiChartWrap").innerHTML = bmiSvg || '<div class="empty-note">체중을 입력하면 BMI 추이가 표시됩니다</div>';
+
+  var bmrSvg = buildLineSvg([{data:bodySeriesForKey("bmr",dim), color:"#2F3E85"}], dim, {});
+  document.getElementById("bmrChartWrap").innerHTML = bmrSvg || '<div class="empty-note">이번 달 기초대사량 기록이 없습니다</div>';
+
+  var bpSvg = buildLineSvg([
+    {data:bodySeriesForKey("bpSys",dim), color:"#6C4FF6"},
+    {data:bodySeriesForKey("bpDia",dim), color:"#C9B8FE"}
+  ], dim, {});
+  document.getElementById("bpChartWrap").innerHTML = bpSvg || '<div class="empty-note">이번 달 혈압 기록이 없습니다</div>';
+}
+
+/* ---------- goal status ---------- */
+function latestBody(){
+  var sorted = bodyMem.slice().sort(function(a,b){ return a.date<b.date?1:-1; });
+  return sorted.length ? sorted[0] : null;
+}
+function renderGoalStatus(){
+  var latest = latestBody();
+
+  var wVal = document.getElementById("goalWeightVal");
+  var wPill = document.getElementById("goalWeightPill");
+  if(latest && latest.weight!=null){
+    var w = latest.weight;
+    wVal.textContent = w.toFixed(1)+" kg  ("+latest.date+" 기준)";
+    if(w<=63 && w>=62){ wPill.className="gpill good"; wPill.textContent="목표 구간 도달"; }
+    else if(w<62){ wPill.className="gpill good"; wPill.textContent="목표 아래 -"+(62-w).toFixed(1)+"kg"; }
+    else{ wPill.className="gpill warn"; wPill.textContent="목표까지 -"+(w-63).toFixed(1)+"kg"; }
+  } else {
+    wVal.textContent = "체중을 입력하면 표시됩니다";
+    wPill.className="gpill neutral"; wPill.textContent="기록 없음";
+  }
+
+  var mVal = document.getElementById("goalMuscleVal");
+  var mPill = document.getElementById("goalMusclePill");
+  if(latest && latest.smm!=null){
+    var m = latest.smm;
+    mVal.textContent = m.toFixed(1)+" kg  ("+latest.date+" 기준)";
+    if(m>=30){ mPill.className="gpill good"; mPill.textContent="목표 유지 중"; }
+    else if(m>=29){ mPill.className="gpill warn"; mPill.textContent="주의 -"+(30-m).toFixed(1)+"kg"; }
+    else{ mPill.className="gpill bad"; mPill.textContent="경고 -"+(30-m).toFixed(1)+"kg"; }
+  } else {
+    mVal.textContent = "골격근량을 입력하면 표시됩니다";
+    mPill.className="gpill neutral"; mPill.textContent="기록 없음";
+  }
+}
+
+/* ---------- streaks ---------- */
+function earliestDateStr(){
+  var dates = logMem.map(function(x){return x.date;}).concat(bodyMem.map(function(x){return x.date;}));
+  if(!dates.length) return null;
+  return dates.reduce(function(a,b){ return a<b?a:b; });
+}
+function streakRunDays(){
+  var earliest = earliestDateStr();
+  if(!earliest) return 0;
+  var days=0; var d = new Date(TODAY.y,TODAY.m,TODAY.d);
+  while(true){
+    var ds = dstr(d.getFullYear(), d.getMonth(), d.getDate());
+    if(ds<earliest) break;
+    var has = logMem.some(function(x){return x.date===ds && x.kind==="run";});
+    if(!has) break;
+    days++; d.setDate(d.getDate()-1);
+  }
+  return days;
+}
+function streakNoDrinkDays(){
+  var earliest = earliestDateStr();
+  if(!earliest) return 0;
+  var days=0; var d = new Date(TODAY.y,TODAY.m,TODAY.d);
+  while(true){
+    var ds = dstr(d.getFullYear(), d.getMonth(), d.getDate());
+    if(ds<earliest) break;
+    var drank = logMem.some(function(x){return x.date===ds && x.kind==="drink";});
+    if(drank) break;
+    days++; d.setDate(d.getDate()-1);
+  }
+  return days;
+}
+function renderStreaks(){
+  document.getElementById("streakRun").textContent = streakRunDays()+"일";
+  document.getElementById("streakNoDrink").textContent = streakNoDrinkDays()+"일";
+}
+
+/* ---------- weekly trend (last 8 weeks, Monday-start) ---------- */
+function weekBuckets(n){
+  var t = new Date(TODAY.y,TODAY.m,TODAY.d);
+  var dow = t.getDay(); // 0=Sun..6=Sat
+  var toMonday = (dow===0) ? 6 : dow-1;
+  var thisMonday = new Date(t); thisMonday.setDate(t.getDate()-toMonday);
+  var buckets=[];
+  for(var i=n-1;i>=0;i--){
+    var start = new Date(thisMonday); start.setDate(thisMonday.getDate()-i*7);
+    var end = new Date(start); end.setDate(start.getDate()+6);
+    buckets.push({start:start, end:end,
+      startStr: dstr(start.getFullYear(),start.getMonth(),start.getDate()),
+      endStr: dstr(end.getFullYear(),end.getMonth(),end.getDate())});
+  }
+  return buckets;
+}
+function sumInRange(kind, valKey, startStr, endStr){
+  return logMem.filter(function(x){ return x.kind===kind && x.date>=startStr && x.date<=endStr; })
+               .reduce(function(s,x){ return s+x[valKey]; },0);
+}
+function renderWeeklyBar(barsId, maxId, firstId, kind, valKey, color, unit){
+  var buckets = weekBuckets(8);
+  var vals = buckets.map(function(b){ return sumInRange(kind, valKey, b.startStr, b.endStr); });
+  var max = Math.max.apply(null, vals.concat([kind==="drink"?1:(kind==="push"?10:1)]));
+  var html = "";
+  vals.forEach(function(v){
+    var h = v>0 ? Math.max(4,(v/max*100)) : 2;
+    html += '<div class="barcol"><div class="barfill" style="height:'+h+'%;background:'+color+'"></div></div>';
+  });
+  document.getElementById(barsId).innerHTML = html;
+  var m = Math.max.apply(null, vals);
+  document.getElementById(maxId).textContent = m>0 ? ("최고주 "+(unit==="km"?m.toFixed(1):m)+unit) : "기록 없음";
+  var first = buckets[0];
+  document.getElementById(firstId).textContent = (first.start.getMonth()+1)+"/"+first.start.getDate()+"주";
+}
+function renderWeeklyCharts(){
+  renderWeeklyBar("wkRunBars","wkRunMax","wkRunFirst","run","km","#0078C8","km");
+  renderWeeklyBar("wkPushBars","wkPushMax","wkPushFirst","push","count","#FF8A00","개");
+  renderWeeklyBar("wkDrinkBars","wkDrinkMax","wkDrinkFirst","drink","glasses","#E5384F","잔");
+}
+
+/* ---------- month navigation ---------- */
+document.getElementById("prevM").addEventListener("click", function(){
+  view.m--; if(view.m<0){ view.m=11; view.y--; } renderAll();
+});
+document.getElementById("nextM").addEventListener("click", function(){
+  view.m++; if(view.m>11){ view.m=0; view.y++; } renderAll();
+});
+document.getElementById("monthLabel").addEventListener("click", function(){
+  view.y=TODAY.y; view.m=TODAY.m; renderAll();
+});
+
+/* ---------- render all ---------- */
+function renderAll(){
+  renderHeader();
+  renderDateLogs();
+  renderGoalStatus();
+  renderStreaks();
+  renderCalendar();
+  renderMonthStats();
+  renderWeeklyCharts();
+  renderBarChart("runBars","runChartMax","runMidLabel","runLastLabel","run","km","#0078C8","km",5);
+  renderBarChart("pushBars","pushChartMax","pushMidLabel","pushLastLabel","push","count","#FF8A00","개",30);
+  renderLineCharts();
+}
+
+load();
+})();
+</script>
+</body>
+</html>
