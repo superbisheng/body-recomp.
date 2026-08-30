@@ -299,7 +299,7 @@ footer{padding:18px 20px 4px;font-family:var(--mono);font-size:10px;color:var(--
         <input type="date" id="i_date">
       </div>
 
-      <div class="subhead">🏃 달리기 — 여러 번 기록 가능</div>
+      <div class="subhead">🏃 러닝 — 여러 번 기록 가능</div>
       <div class="addrow">
         <div class="addrow-top">
           <input type="number" step="0.01" id="i_run_val" placeholder="예: 3.0 km" inputmode="decimal">
@@ -425,7 +425,7 @@ footer{padding:18px 20px 4px;font-family:var(--mono);font-size:10px;color:var(--
   <div class="sec">
     <div class="card">
       <div class="chart-head">
-        <span class="chart-title"><i style="background:var(--blue)"></i>달리기 거리 (일별 합계)</span>
+        <span class="chart-title"><i style="background:var(--blue)"></i>러닝 거리 (일별 합계)</span>
         <span class="chart-max" id="runChartMax">-</span>
       </div>
       <div class="bars" id="runBars"></div>
@@ -501,8 +501,8 @@ function findBody(d){ for(var i=0;i<bodyMem.length;i++){ if(bodyMem[i].date===d)
 function num(id){ var v=document.getElementById(id).value; return v===""? null : parseFloat(v); }
 
 function seed(){
-  bodyMem = [{date:"2026-08-30", weight:69.8, smm:29.3, fm:15.5, bmr:1542, bpSys:null, bpDia:null}];
-  logMem = [{id:genId(), date:"2026-08-30", kind:"run", km:4.0}];
+  bodyMem = [];
+  logMem = [];
 }
 function defaultGoals(){ return {wLow:62, wHigh:63, muscle:30}; }
 
@@ -586,7 +586,7 @@ document.getElementById("i_date").addEventListener("change", function(){
 
 /* ---------- run / pushup logs ---------- */
 function addRunLog(km){
-  if(!km || km<=0){ setStatus("달리기 거리를 입력해주세요"); return; }
+  if(!km || km<=0){ setStatus("러닝 거리를 입력해주세요"); return; }
   logMem.push({id:genId(), date:curDate(), kind:"run", km:Math.round(km*100)/100});
   document.getElementById("i_run_val").value="";
   persist("러닝 "+km+"km 추가됨");
