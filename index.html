@@ -3,9 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0078C8">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Body Recomp.">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
 <title>Body Recomp. — by superbisheng</title>
 <style>
 :root{
@@ -38,8 +45,9 @@
   --somaek:#D6336C;
   --etc:#8C98A5;
 
-  --sans:-apple-system,BlinkMacSystemFont,"Inter","Pretendard","Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",system-ui,sans-serif;
-  --mono:ui-monospace,"SF Mono","Roboto Mono",Menlo,Consolas,monospace;
+  --sans:"Pretendard",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",system-ui,sans-serif;
+  --field-h:36px;
+  --mono:"Pretendard",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",system-ui,sans-serif;
 }
 *{box-sizing:border-box;}
 html,body{margin:0;padding:0;}
@@ -49,6 +57,7 @@ body{
   font-family:var(--sans);
   -webkit-font-smoothing:antialiased;
   font-variant-numeric:tabular-nums;
+  letter-spacing:-0.02em;
 }
 .app{
   max-width:480px;margin:0 auto;background:var(--bg);
@@ -91,23 +100,26 @@ header::after{
 .subhead:first-of-type{margin-top:2px;}
 
 .form-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;}
+.form-head.date-row{justify-content:flex-start;gap:10px;flex-wrap:wrap;}
 .form-head input[type=date]{
+  height:var(--field-h);box-sizing:border-box;
   font-family:var(--mono);font-size:13px;font-weight:700;color:var(--ink);
-  border:1px solid var(--line);background:var(--card-soft);border-radius:9px;padding:7px 9px;
+  border:1px solid var(--line);background:var(--card-soft);border-radius:9px;padding:0 9px;
 }
 
 /* ---------- activity add widgets ---------- */
 .addrow{margin-bottom:14px;}
 .addrow-top{display:flex;gap:8px;align-items:center;}
 .addrow-top input[type=number]{
-  flex:1;font-family:var(--mono);font-size:15px;font-weight:700;color:var(--ink);
-  border:1.5px solid var(--line);border-radius:12px;padding:10px 11px;background:var(--card-soft);
+  flex:1;height:var(--field-h);box-sizing:border-box;font-family:var(--mono);font-size:15px;font-weight:700;color:var(--ink);
+  border:1.5px solid var(--line);border-radius:12px;padding:0 11px;background:var(--card-soft);
   min-width:0;
 }
 .addrow-top input:focus{outline:none;border-color:var(--blue);background:#fff;}
 .addbtn{
+  height:var(--field-h);box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;
   font-size:13px;font-weight:800;color:#fff;background:var(--ink);border:none;
-  border-radius:12px;padding:0 16px;height:42px;cursor:pointer;white-space:nowrap;
+  border-radius:12px;padding:0 16px;cursor:pointer;white-space:nowrap;
 }
 .chips{display:flex;gap:6px;margin-top:7px;}
 .chip{
@@ -137,7 +149,8 @@ header::after{
 /* drink type picker */
 .drinkTypes{display:flex;gap:6px;margin-bottom:9px;}
 .dtBtn{
-  flex:1;font-size:12.5px;font-weight:800;padding:9px 0;border-radius:11px;
+  flex:1;height:var(--field-h);box-sizing:border-box;display:flex;align-items:center;justify-content:center;
+  font-size:12.5px;font-weight:800;border-radius:11px;
   border:1.5px solid var(--line);background:var(--card-soft);color:var(--sub);cursor:pointer;
 }
 .dtBtn.sel-soju{background:#E6F7EC;border-color:var(--soju);color:var(--soju);}
@@ -146,17 +159,19 @@ header::after{
 .dtBtn.sel-etc{background:#EEF0F2;border-color:var(--etc);color:var(--etc);}
 
 /* body vitals */
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.f{display:flex;flex-direction:column;gap:5px;}
-.f label{font-size:11.5px;font-weight:700;color:var(--sub);}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;}
+.f{display:flex;flex-direction:column;gap:5px;min-width:0;}
+.f label{font-size:11px;font-weight:700;color:var(--sub);word-break:keep-all;overflow-wrap:break-word;line-height:1.3;}
 .f input{
+  width:100%;max-width:100%;box-sizing:border-box;height:var(--field-h);
   font-family:var(--mono);font-size:15px;font-weight:700;color:var(--ink);
-  border:1.5px solid var(--line);border-radius:10px;padding:9px 10px;background:var(--card-soft);
+  border:1.5px solid var(--line);border-radius:10px;padding:0 10px;background:var(--card-soft);
 }
 .f input:focus{outline:none;border-color:var(--blue);background:#fff;}
 .saveBtn{
-  width:100%;margin-top:16px;padding:14px;border:none;border-radius:14px;
+  width:100%;margin-top:16px;height:var(--field-h);box-sizing:border-box;border:none;border-radius:14px;
   background:var(--ink);color:#fff;font-size:15px;font-weight:800;letter-spacing:.02em;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
 }
 .saveBtn:active{background:#0B1420;}
 .status{font-family:var(--mono);font-size:11.5px;color:var(--sub);margin-top:10px;min-height:14px;text-align:center;}
@@ -178,14 +193,12 @@ header::after{
   aspect-ratio:1;border-radius:9px;background:var(--card-soft);position:relative;
   display:flex;align-items:flex-start;justify-content:flex-start;padding:4px 5px;
   font-family:var(--mono);font-size:11px;font-weight:700;color:var(--sub);cursor:pointer;
-  border:1.5px solid transparent;
 }
 .calcell.blank{background:transparent;cursor:default;}
-.calcell.today{border-color:var(--blue);}
-.calcell.body-log{box-shadow:inset 0 2px 0 var(--c-weight);}
+.calcell.today{background:var(--red-soft);}
+.calcell.body-log{color:var(--c-weight);}
 .dots{position:absolute;bottom:4px;left:5px;display:flex;gap:2px;}
 .dots i{width:5px;height:5px;border-radius:50%;display:block;}
-.calcell.drank{background:var(--red-soft);}
 .calempty{text-align:center;font-size:12px;color:var(--faint);padding:14px 0 4px;}
 
 /* kpi row */
@@ -228,10 +241,11 @@ header::after{
 .tabrow:first-of-type{margin-top:8px;}
 .tabrow.sub{margin-top:8px;}
 .tabbtn{
-  flex:1;font-size:12.5px;font-weight:800;padding:9px 0;border-radius:11px;
+  flex:1;height:var(--field-h);box-sizing:border-box;font-size:12.5px;font-weight:800;border-radius:11px;
   border:1.5px solid var(--line);background:var(--card-soft);color:var(--sub);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:4px;text-align:center;line-height:1.2;
 }
-.tabrow.sub .tabbtn{font-size:12px;font-weight:700;padding:7px 0;}
+.tabrow.sub .tabbtn{font-size:12px;font-weight:700;}
 .tabbtn.on-run{background:#E7F2FA;border-color:var(--blue);color:var(--blue-dk);}
 .tabbtn.on-push{background:#FFF1E0;border-color:var(--orange);color:#B85E00;}
 .tabbtn.on-drink{background:var(--red-soft);border-color:var(--red);color:var(--red);}
@@ -243,8 +257,8 @@ header::after{
 .chart-title i{width:9px;height:9px;border-radius:50%;display:inline-block;}
 .chart-max{font-family:var(--mono);font-size:11px;color:var(--faint);}
 .bars{display:flex;align-items:flex-end;gap:2px;height:110px;}
-.barcol{flex:1;height:100%;display:flex;align-items:flex-end;}
-.barfill{width:100%;border-radius:3px 3px 0 0;height:2%;transition:height .6s ease;}
+.barcol{flex:1;height:100%;display:flex;align-items:flex-end;justify-content:center;}
+.barfill{width:100%;max-width:20px;margin:0 auto;border-radius:3px 3px 0 0;height:2%;transition:height .6s ease;}
 .chart-xaxis{display:flex;justify-content:space-between;margin-top:6px;font-family:var(--mono);font-size:10px;color:var(--faint);}
 .legend{display:flex;gap:14px;margin-bottom:8px;flex-wrap:wrap;}
 .legend span{display:flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;color:var(--sub);}
@@ -277,7 +291,7 @@ footer{padding:18px 20px 4px;font-family:var(--mono);font-size:10px;color:var(--
     <div class="card">
       <div class="form-head">
         <p class="eyebrow">🎯 목표 현황</p>
-        <button type="button" class="chip" id="toggleGoalEdit">목표 수정</button>
+        <button type="button" class="chip" id="toggleGoalEdit" style="font-size:10.5px;font-family:var(--sans)">목표 수정</button>
       </div>
       <div class="goalrow" id="goalWeightRow">
         <div class="gi">⚖️</div>
@@ -309,15 +323,15 @@ footer{padding:18px 20px 4px;font-family:var(--mono);font-size:10px;color:var(--
   <!-- ===== 날짜 선택 + 활동 기록 ===== -->
   <div class="sec">
     <div class="card">
-      <div class="form-head">
+      <div class="form-head date-row">
         <p class="eyebrow">기록할 날짜</p>
         <input type="date" id="i_date">
       </div>
 
-      <div class="subhead">🏃 러닝 — 여러 번 기록 가능</div>
+      <div class="subhead">🏃 러닝</div>
       <div class="addrow">
         <div class="addrow-top">
-          <input type="number" step="0.01" id="i_run_val" placeholder="예: 3.0 km" inputmode="decimal">
+          <input type="number" step="0.01" id="i_run_val" inputmode="decimal">
           <button type="button" class="addbtn" id="addRun">추가</button>
         </div>
         <div class="chips">
@@ -329,10 +343,10 @@ footer{padding:18px 20px 4px;font-family:var(--mono);font-size:10px;color:var(--
         <div class="sumline" id="runLogSum">아직 기록이 없습니다</div>
       </div>
 
-      <div class="subhead">💪 푸시업 — 여러 번 기록 가능</div>
+      <div class="subhead">💪 푸시업</div>
       <div class="addrow">
         <div class="addrow-top">
-          <input type="number" id="i_push_val" placeholder="예: 20개" inputmode="numeric">
+          <input type="number" id="i_push_val" inputmode="numeric">
           <button type="button" class="addbtn" id="addPush">추가</button>
         </div>
         <div class="chips">
@@ -344,7 +358,7 @@ footer{padding:18px 20px 4px;font-family:var(--mono);font-size:10px;color:var(--
         <div class="sumline" id="pushLogSum">아직 기록이 없습니다</div>
       </div>
 
-      <div class="subhead">🍺 음주 — 종류별로 기록</div>
+      <div class="subhead">🍺 음주</div>
       <div class="addrow">
         <div class="drinkTypes">
           <button type="button" class="dtBtn" data-dt="소주" id="dtSoju">소주</button>
@@ -353,7 +367,7 @@ footer{padding:18px 20px 4px;font-family:var(--mono);font-size:10px;color:var(--
           <button type="button" class="dtBtn" data-dt="기타" id="dtEtc">기타</button>
         </div>
         <div class="addrow-top">
-          <input type="number" id="i_drink_glasses" placeholder="몇 잔" inputmode="numeric">
+          <input type="number" id="i_drink_glasses" inputmode="numeric">
           <button type="button" class="addbtn" id="addDrink">추가</button>
         </div>
         <div class="loglist" id="drinkLogList"></div>
@@ -394,7 +408,7 @@ footer{padding:18px 20px 4px;font-family:var(--mono);font-size:10px;color:var(--
     </div>
 
     <div class="card">
-      <p class="eyebrow">이번 달 요약</p>
+      <p class="eyebrow">🗓️ 이번 달 요약</p>
       <div class="kpis">
         <div class="kpi"><div class="ic">🏃</div><div class="v" id="sumRun">-</div><div class="k">총 러닝 km</div></div>
         <div class="kpi"><div class="ic">💪</div><div class="v" id="sumPush">-</div><div class="k">총 푸시업</div></div>
@@ -404,7 +418,7 @@ footer{padding:18px 20px 4px;font-family:var(--mono);font-size:10px;color:var(--
     </div>
 
     <div class="card">
-      <p class="eyebrow">이번 달 음주 구성</p>
+      <p class="eyebrow">🍺 이번 달 음주 구성</p>
       <div class="dbk" id="drinkBreakdown"></div>
     </div>
   </div>
@@ -446,7 +460,7 @@ footer{padding:18px 20px 4px;font-family:var(--mono);font-size:10px;color:var(--
     </div>
 
     <div class="card">
-      <p class="eyebrow">체성분 추이 <span class="chart-cap" id="bodyCap"></span></p>
+      <p class="eyebrow">⚖️ 체성분 추이 <span class="chart-cap" id="bodyCap"></span></p>
       <div class="legend">
         <span><i style="background:var(--c-weight)"></i>체중</span>
         <span><i style="background:var(--c-smm)"></i>골격근량</span>
@@ -457,16 +471,21 @@ footer{padding:18px 20px 4px;font-family:var(--mono);font-size:10px;color:var(--
     </div>
 
     <div class="card">
-      <p class="eyebrow">기초대사량 추이 <span class="chart-cap" id="bmrCap"></span></p>
+      <p class="eyebrow">🔥 기초대사량 추이 <span class="chart-cap" id="bmrCap"></span></p>
+      <div class="legend">
+        <span><i style="background:#2F3E85"></i>기초대사량</span>
+        <span><i style="background:#E8A33D"></i>목표 섭취량</span>
+      </div>
       <div id="bmrChartWrap"></div>
       <div class="chart-xaxis"><span id="bmrFirst">-</span><span id="bmrLast">-</span></div>
     </div>
 
     <div class="card">
-      <p class="eyebrow">혈압 추이 <span class="chart-cap" id="bpCap"></span></p>
+      <p class="eyebrow">🩺 혈압 추이 <span class="chart-cap" id="bpCap"></span></p>
       <div class="legend">
         <span><i style="background:var(--c-sys)"></i>수축기</span>
         <span><i style="background:var(--c-dia)"></i>이완기</span>
+        <span style="color:var(--faint);font-weight:600">점선: 정상 기준 120/80</span>
       </div>
       <div id="bpChartWrap"></div>
       <div class="chart-xaxis"><span id="bpFirst">-</span><span id="bpLast">-</span></div>
@@ -725,10 +744,10 @@ function renderCalendar(){
     var cls = "calcell";
     if(ds===TODAY_STR) cls += " today";
     if(hasBody) cls += " body-log";
-    if(hasDrink) cls += " drank";
     var dots = "";
     if(hasRun) dots += '<i style="background:var(--blue)"></i>';
     if(hasPush) dots += '<i style="background:var(--orange)"></i>';
+    if(hasDrink) dots += '<i style="background:var(--red)"></i>';
     html += '<div class="'+cls+'" data-date="'+ds+'">'+d+'<div class="dots">'+dots+'</div></div>';
   }
   document.getElementById("calGrid").innerHTML = html;
@@ -807,8 +826,7 @@ function buildLineSvg(seriesList, dim, opts){
   targets.forEach(function(t){
     var ty = Y(t.value);
     var col = t.color || "#9AA7B2";
-    svg += '<line x1="'+PL+'" y1="'+ty+'" x2="'+(W-PR)+'" y2="'+ty+'" stroke="'+col+'" stroke-width="1.3" stroke-dasharray="4,4"/>';
-    svg += '<text x="'+(W-PR)+'" y="'+(ty-4)+'" text-anchor="end" font-size="9" fill="'+col+'" font-family="ui-monospace,monospace" font-weight="700">'+(t.label||("목표 "+t.value))+'</text>';
+    svg += '<line x1="'+PL+'" y1="'+ty+'" x2="'+(W-PR)+'" y2="'+ty+'" stroke="'+col+'" stroke-width="0.6" stroke-opacity="0.35" stroke-dasharray="2,4" vector-effect="non-scaling-stroke"/>';
   });
 
   seriesList.forEach(function(s){
@@ -892,7 +910,10 @@ function renderLineCharts(){
   document.getElementById("bodyLast").textContent = wS.last;
 
   var bmrS = vitalsSeriesForKey("bmr", vitalsGran);
-  var bmrSvg = buildLineSvg([{data:bmrS.data, color:"#2F3E85"}], bmrS.dim, {});
+  var latestB = latestBody();
+  var intakeTarget = (latestB && latestB.bmr!=null) ? Math.round(latestB.bmr*1.4) - 450 : null;
+  var bmrSvg = buildLineSvg([{data:bmrS.data, color:"#2F3E85"}], bmrS.dim,
+    {targets: intakeTarget!=null ? [{value:intakeTarget, color:"#E8A33D"}] : []});
   document.getElementById("bmrChartWrap").innerHTML = bmrSvg || '<div class="empty-note">표시할 기초대사량 기록이 없습니다</div>';
   document.getElementById("bmrCap").textContent = bmrS.caption;
   document.getElementById("bmrFirst").textContent = bmrS.first;
@@ -903,7 +924,10 @@ function renderLineCharts(){
   var bpSvg = buildLineSvg([
     {data:sysS.data, color:"#6C4FF6"},
     {data:diaS.data, color:"#C9B8FE"}
-  ], sysS.dim, {});
+  ], sysS.dim, {targets:[
+    {value:120, color:"#6C4FF6"},
+    {value:80,  color:"#C9B8FE"}
+  ]});
   document.getElementById("bpChartWrap").innerHTML = bpSvg || '<div class="empty-note">표시할 혈압 기록이 없습니다</div>';
   document.getElementById("bpCap").textContent = sysS.caption;
   document.getElementById("bpFirst").textContent = sysS.first;
