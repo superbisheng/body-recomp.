@@ -240,10 +240,18 @@ header::after{
 /* drink breakdown */
 .dbk{display:flex;flex-direction:column;gap:9px;}
 .dbk-row{display:grid;grid-template-columns:52px 1fr 44px;align-items:center;gap:9px;}
-.dbk-row .n{font-size:12.5px;font-weight:800;text-align:center;}
+.dbk-row .n{font-size:12.5px;font-weight:800;text-align:left;}
 .dbk-row .bar{height:10px;border-radius:5px;background:var(--card-soft);overflow:hidden;}
 .dbk-row .bar i{display:block;height:100%;width:0;border-radius:5px;transition:width .6s ease;}
 .dbk-row .v{font-family:var(--mono);font-size:12px;font-weight:800;text-align:right;}
+.dbk-details summary.dbk-row{cursor:pointer;list-style:none;}
+.dbk-details summary.dbk-row::-webkit-details-marker{display:none;}
+.dbk-details summary.dbk-row::marker{content:"";}
+.dbk-arrow{display:inline-block;margin-left:3px;color:var(--faint);font-weight:800;transition:transform .2s ease;}
+.dbk-details[open] .dbk-arrow{transform:rotate(90deg);}
+.dbk-etc-list{margin:7px 0 2px;padding:9px 12px 9px 32px;background:var(--card-soft);border-radius:10px;display:flex;flex-direction:column;gap:6px;}
+.dbk-etc-item{display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:var(--sub);}
+.dbk-etc-item span:last-child{font-family:var(--mono);font-weight:800;color:var(--ink);}
 
 /* charts */
 /* activity trend tabs */
@@ -378,6 +386,7 @@ footer{padding:18px 20px 4px;font-family:var(--mono);font-size:10px;color:var(--
           <button type="button" class="dtBtn" data-dt="소맥" id="dtSomaek">소맥</button>
           <button type="button" class="dtBtn" data-dt="기타" id="dtEtc">기타</button>
         </div>
+        <input type="text" id="i_drink_other" placeholder="예: 와인, 하이볼, 위스키" style="display:none;width:100%;height:var(--field-h);box-sizing:border-box;font-family:var(--sans);font-size:14px;font-weight:600;color:var(--ink);border:1.5px solid var(--line);border-radius:12px;padding:0 12px;background:var(--card-soft);margin-bottom:9px;">
         <div class="chips">
           <button type="button" class="chip red" id="addDrinkOne">+1잔</button>
           <span style="font-size:11px;color:var(--faint);align-self:center;">마실 때마다 탭 권장</span>
@@ -659,6 +668,13 @@ function setDrinkType(t){
     var el = document.getElementById(map[k]);
     el.className = "dtBtn" + (k===t ? " "+clsMap[k] : "");
   });
+  var otherInput = document.getElementById("i_drink_other");
+  if(t==="기타"){ otherInput.style.display="block"; }
+  else{ otherInput.style.display="none"; otherInput.value=""; }
+}
+function drinkOtherLabel(){
+  var v = document.getElementById("i_drink_other").value.trim();
+  return v ? v.slice(0,20) : null;
 }
 document.querySelectorAll(".dtBtn").forEach(function(btn){
   btn.addEventListener("click", function(){
@@ -667,17 +683,19 @@ document.querySelectorAll(".dtBtn").forEach(function(btn){
 });
 document.getElementById("addDrinkOne").addEventListener("click", function(){
   if(!selectedDrinkType){ setStatus("술 종류를 먼저 선택해주세요"); return; }
-  logMem.push({id:genId(), date:curDate(), kind:"drink", drinkType:selectedDrinkType, glasses:1});
-  persist(selectedDrinkType+" +1잔");
+  var other = selectedDrinkType==="기타" ? drinkOtherLabel() : null;
+  logMem.push({id:genId(), date:curDate(), kind:"drink", drinkType:selectedDrinkType, glasses:1, otherLabel:other});
+  persist(selectedDrinkType+(other?"("+other+")":"")+" +1잔");
 });
 document.getElementById("addDrink").addEventListener("click", function(){
   var glasses = parseFloat(document.getElementById("i_drink_glasses").value);
   if(!selectedDrinkType){ setStatus("술 종류를 먼저 선택해주세요"); return; }
   if(!glasses || glasses<=0){ setStatus("몇 잔인지 입력해주세요"); return; }
-  logMem.push({id:genId(), date:curDate(), kind:"drink", drinkType:selectedDrinkType, glasses:Math.round(glasses*10)/10});
+  var other = selectedDrinkType==="기타" ? drinkOtherLabel() : null;
+  logMem.push({id:genId(), date:curDate(), kind:"drink", drinkType:selectedDrinkType, glasses:Math.round(glasses*10)/10, otherLabel:other});
   document.getElementById("i_drink_glasses").value="";
   setDrinkType(null);
-  persist(selectedDrinkType+" "+glasses+"잔 추가됨");
+  persist(selectedDrinkType+(other?"("+other+")":"")+" "+glasses+"잔 추가됨");
 });
 
 /* ---------- delete a log ---------- */
@@ -713,7 +731,8 @@ function renderDateLogs(){
 
   var drinks = dayLogs.filter(function(x){ return x.kind==="drink"; });
   var drinkHtml = drinks.map(function(x){
-    return '<div class="logitem"><span>'+x.drinkType+' '+x.glasses+'잔</span><button class="x" data-del="'+x.id+'">×</button></div>';
+    var label = x.drinkType + (x.otherLabel ? ("("+String(x.otherLabel).replace(/[<>]/g,"")+")") : "");
+    return '<div class="logitem"><span>'+label+' '+x.glasses+'잔</span><button class="x" data-del="'+x.id+'">×</button></div>';
   }).join("");
   document.getElementById("drinkLogList").innerHTML = drinkHtml;
   var drinkSum = drinks.reduce(function(s,x){ return s+x.glasses; },0);
@@ -815,13 +834,38 @@ function renderMonthStats(){
   drinks.forEach(function(x){ byType[x.drinkType] = (byType[x.drinkType]||0)+x.glasses; });
   var colorMap = {"소주":"var(--soju)","맥주":"var(--beer)","소맥":"var(--somaek)","기타":"var(--etc)"};
   var maxV = Math.max(1, byType["소주"], byType["맥주"], byType["소맥"], byType["기타"]);
+
+  var etcByLabel = {};
+  drinks.forEach(function(x){
+    if(x.drinkType==="기타"){
+      var lbl = (x.otherLabel ? String(x.otherLabel).replace(/[<>]/g,"") : "이름 미입력");
+      etcByLabel[lbl] = (etcByLabel[lbl]||0) + x.glasses;
+    }
+  });
+  var etcLabels = Object.keys(etcByLabel);
+
   var dbkHtml = "";
-  ["소주","맥주","소맥","기타"].forEach(function(k){
+  ["소주","맥주","소맥"].forEach(function(k){
     var w = byType[k]>0 ? Math.max(6, (byType[k]/maxV)*100) : 0;
     dbkHtml += '<div class="dbk-row"><span class="n">'+k+'</span>'+
       '<span class="bar"><i style="width:'+w+'%;background:'+colorMap[k]+'"></i></span>'+
       '<span class="v">'+byType[k]+'잔</span></div>';
   });
+  var wEtc = byType["기타"]>0 ? Math.max(6, (byType["기타"]/maxV)*100) : 0;
+  if(etcLabels.length){
+    var etcListHtml = etcLabels.sort(function(a,b){ return etcByLabel[b]-etcByLabel[a]; }).map(function(lbl){
+      return '<div class="dbk-etc-item"><span>'+lbl+'</span><span>'+etcByLabel[lbl]+'잔</span></div>';
+    }).join("");
+    dbkHtml += '<details class="dbk-details"><summary class="dbk-row">'+
+      '<span class="n">기타<span class="dbk-arrow">›</span></span>'+
+      '<span class="bar"><i style="width:'+wEtc+'%;background:var(--etc)"></i></span>'+
+      '<span class="v">'+byType["기타"]+'잔</span></summary>'+
+      '<div class="dbk-etc-list">'+etcListHtml+'</div></details>';
+  } else {
+    dbkHtml += '<div class="dbk-row"><span class="n">기타</span>'+
+      '<span class="bar"><i style="width:'+wEtc+'%;background:var(--etc)"></i></span>'+
+      '<span class="v">'+byType["기타"]+'잔</span></div>';
+  }
   document.getElementById("drinkBreakdown").innerHTML = dbkHtml;
 }
 
