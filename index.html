@@ -130,12 +130,13 @@ header::after{
   font-size:13px;font-weight:800;color:#fff;background:var(--ink);border:none;
   border-radius:12px;padding:0 16px;cursor:pointer;white-space:nowrap;
 }
-.chips{display:flex;gap:6px;margin-top:7px;}
+.chips{display:flex;gap:6px;margin-top:7px;margin-bottom:7px;}
 .chip{
   font-family:var(--mono);font-size:12px;font-weight:700;color:var(--blue-dk);
   background:#E7F2FA;border:none;border-radius:20px;padding:6px 12px;cursor:pointer;
 }
 .chip.orange{color:#B85E00;background:#FFF1E0;}
+.chip.red{color:var(--red);background:var(--red-soft);}
 .chip:active{filter:brightness(.95);}
 
 .loglist{margin-top:9px;display:flex;flex-direction:column;gap:6px;}
@@ -375,6 +376,10 @@ footer{padding:18px 20px 4px;font-family:var(--mono);font-size:10px;color:var(--
           <button type="button" class="dtBtn" data-dt="소맥" id="dtSomaek">소맥</button>
           <button type="button" class="dtBtn" data-dt="기타" id="dtEtc">기타</button>
         </div>
+        <div class="chips">
+          <button type="button" class="chip red" id="addDrinkOne">+1잔</button>
+          <span style="font-size:11px;color:var(--faint);align-self:center;">마실 때마다 탭 권장</span>
+        </div>
         <div class="addrow-top">
           <input type="number" id="i_drink_glasses" inputmode="numeric">
           <button type="button" class="addbtn" id="addDrink">추가</button>
@@ -503,7 +508,7 @@ footer{padding:18px 20px 4px;font-family:var(--mono);font-size:10px;color:var(--
 
   <footer>
     Body Recomp. · by superbisheng<br>
-    기록은 이 브라우저(기기)에만 저장되며 서버로 전송되지 않습니다 · 의료 조언이 아닙니다<br>
+    기록은 본인의 기기에만 저장되어 다른 사람은 알 수 없습니다 · 의료 조언이 아닙니다<br>
     러닝·푸시업·음주는 하루에 여러 번 기록되며 자동 합산됩니다
   </footer>
 
@@ -657,6 +662,11 @@ document.querySelectorAll(".dtBtn").forEach(function(btn){
   btn.addEventListener("click", function(){
     setDrinkType(selectedDrinkType===btn.dataset.dt ? null : btn.dataset.dt);
   });
+});
+document.getElementById("addDrinkOne").addEventListener("click", function(){
+  if(!selectedDrinkType){ setStatus("술 종류를 먼저 선택해주세요"); return; }
+  logMem.push({id:genId(), date:curDate(), kind:"drink", drinkType:selectedDrinkType, glasses:1});
+  persist(selectedDrinkType+" +1잔");
 });
 document.getElementById("addDrink").addEventListener("click", function(){
   var glasses = parseFloat(document.getElementById("i_drink_glasses").value);
