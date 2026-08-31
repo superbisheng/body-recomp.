@@ -516,7 +516,7 @@ footer{padding:18px 20px 4px;font-family:var(--mono);font-size:10px;color:var(--
       <p class="eyebrow">🔥 기초대사량 추이 <span class="chart-cap" id="bmrCap"></span></p>
       <div class="goalrow" id="intakeRow" style="display:none;border-bottom:none;">
         <div class="gi">🎯</div>
-        <div class="gtxt"><div class="glabel">목표 체중 달성을 위해 넘지 않아야 할 하루 섭취량</div><div class="gval" id="intakeVal">-</div></div>
+        <div class="gtxt"><div class="glabel" style="margin-left:3px;color:var(--faint);">목표 체중 달성을 위해 넘지 않아야 할 하루 섭취량</div><div class="gval" id="intakeVal">-</div></div>
       </div>
       <div class="legend">
         <span><i style="background:#2F3E85"></i>기초대사량</span>
@@ -1038,8 +1038,8 @@ function renderLineCharts(){
   var hasBodyDataInView = wS.data.some(function(v){return v!=null;}) || sS.data.some(function(v){return v!=null;}) || fS.data.some(function(v){return v!=null;});
   var bodySvg = buildLineSvg([
     {data:wS.data, color:"#00B295"},
-    {data:sS.data, color:"#4C5FD5", fill:true},
-    {data:fS.data, color:"#FF6B5B", fill:true}
+    {data:sS.data, color:"#4C5FD5"},
+    {data:fS.data, color:"#FF6B5B"}
   ], wS.dim, {targets:bodyTargets});
   document.getElementById("bodyChartWrap").innerHTML = hasBodyDataInView ? bodySvg : '<div class="empty-note">표시할 체성분 기록이 없습니다</div>';
   document.getElementById("bodyCap").textContent = wS.caption;
