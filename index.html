@@ -52,6 +52,10 @@
   --soju:#00A651;
   --beer:#F2A900;
   --somaek:#D6336C;
+  --wine:#8B2942;
+  --whiskey:#B5651D;
+  --highball:#A8B400;
+  --makgeolli:#A88B5E;
   --etc:#8C98A5;
 
   --sans:"Pretendard",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",system-ui,sans-serif;
@@ -157,7 +161,7 @@ header::after{
 .sumline.empty{color:var(--faint);font-weight:600;}
 
 /* drink type picker */
-.drinkTypes{display:flex;gap:6px;margin-bottom:9px;}
+.drinkTypes{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:9px;}
 .dtBtn{
   flex:1;height:var(--field-h);box-sizing:border-box;display:flex;align-items:center;justify-content:center;
   font-size:12.5px;font-weight:800;border-radius:11px;
@@ -166,6 +170,10 @@ header::after{
 .dtBtn.sel-soju{background:#E6F7EC;border-color:var(--soju);color:var(--soju);}
 .dtBtn.sel-beer{background:#FFF7E2;border-color:var(--beer);color:#8A6300;}
 .dtBtn.sel-somaek{background:#FCE6EE;border-color:var(--somaek);color:var(--somaek);}
+.dtBtn.sel-wine{background:#F5E5E9;border-color:var(--wine);color:var(--wine);}
+.dtBtn.sel-whiskey{background:#F7ECDF;border-color:var(--whiskey);color:var(--whiskey);}
+.dtBtn.sel-highball{background:#F6F8DC;border-color:var(--highball);color:#6B7300;}
+.dtBtn.sel-makgeolli{background:#F1ECE3;border-color:var(--makgeolli);color:#7A6547;}
 .dtBtn.sel-etc{background:#EEF0F2;border-color:var(--etc);color:var(--etc);}
 
 /* body vitals */
@@ -210,6 +218,7 @@ header::after{
 .dots{position:absolute;bottom:4px;left:5px;display:flex;gap:2px;}
 .dots i{width:5px;height:5px;border-radius:50%;display:block;}
 .calempty{text-align:center;font-size:12px;color:var(--faint);padding:14px 0 4px;}
+.calSummary{text-align:center;font-size:11.5px;font-weight:700;color:var(--sub);padding:11px 0 2px;}
 
 /* kpi row */
 .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
@@ -239,7 +248,7 @@ header::after{
 
 /* drink breakdown */
 .dbk{display:flex;flex-direction:column;gap:9px;}
-.dbk-row{display:grid;grid-template-columns:52px 1fr 44px;align-items:center;gap:9px;}
+.dbk-row{display:grid;grid-template-columns:60px 1fr 44px;align-items:center;gap:9px;}
 .dbk-row .n{font-size:12.5px;font-weight:800;text-align:left;}
 .dbk-row .bar{height:10px;border-radius:5px;background:var(--card-soft);overflow:hidden;}
 .dbk-row .bar i{display:block;height:100%;width:0;border-radius:5px;transition:width .6s ease;}
@@ -252,6 +261,10 @@ header::after{
 .dbk-etc-list{margin:7px 0 2px;padding:9px 12px 9px 32px;background:var(--card-soft);border-radius:10px;display:flex;flex-direction:column;gap:6px;}
 .dbk-etc-item{display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:var(--sub);}
 .dbk-etc-item span:last-child{font-family:var(--mono);font-weight:800;color:var(--ink);}
+.dbk-toggle{
+  margin-top:4px;width:100%;background:none;border:none;padding:6px 0;
+  font-family:var(--sans);font-size:12px;font-weight:700;color:var(--blue-dk);cursor:pointer;text-align:center;
+}
 
 /* charts */
 /* activity trend tabs */
@@ -384,9 +397,13 @@ footer{padding:18px 20px 4px;font-family:var(--mono);font-size:10px;color:var(--
           <button type="button" class="dtBtn" data-dt="소주" id="dtSoju">소주</button>
           <button type="button" class="dtBtn" data-dt="맥주" id="dtBeer">맥주</button>
           <button type="button" class="dtBtn" data-dt="소맥" id="dtSomaek">소맥</button>
+          <button type="button" class="dtBtn" data-dt="와인" id="dtWine">와인</button>
+          <button type="button" class="dtBtn" data-dt="위스키" id="dtWhiskey">위스키</button>
+          <button type="button" class="dtBtn" data-dt="하이볼" id="dtHighball">하이볼</button>
+          <button type="button" class="dtBtn" data-dt="막걸리" id="dtMakgeolli">막걸리</button>
           <button type="button" class="dtBtn" data-dt="기타" id="dtEtc">기타</button>
         </div>
-        <input type="text" id="i_drink_other" placeholder="예: 와인, 하이볼, 위스키" style="display:none;width:100%;height:var(--field-h);box-sizing:border-box;font-family:var(--sans);font-size:14px;font-weight:600;color:var(--ink);border:1.5px solid var(--line);border-radius:12px;padding:0 12px;background:var(--card-soft);margin-bottom:9px;">
+        <input type="text" id="i_drink_other" placeholder="예: 사케, 데킬라, 칵테일" style="display:none;width:100%;height:var(--field-h);box-sizing:border-box;font-family:var(--sans);font-size:14px;font-weight:600;color:var(--ink);border:1.5px solid var(--line);border-radius:12px;padding:0 12px;background:var(--card-soft);margin-bottom:9px;">
         <div class="chips">
           <button type="button" class="chip red" id="addDrinkOne">+1잔</button>
           <span style="font-size:11px;color:var(--faint);align-self:center;">마실 때마다 탭 권장</span>
@@ -497,23 +514,26 @@ footer{padding:18px 20px 4px;font-family:var(--mono);font-size:10px;color:var(--
 
     <div class="card">
       <p class="eyebrow">🔥 기초대사량 추이 <span class="chart-cap" id="bmrCap"></span></p>
+      <div class="goalrow" id="intakeRow" style="display:none;border-bottom:none;">
+        <div class="gi">🎯</div>
+        <div class="gtxt"><div class="glabel">목표 체중 달성을 위해 넘지 않아야 할 하루 섭취량</div><div class="gval" id="intakeVal">-</div></div>
+      </div>
       <div class="legend">
         <span><i style="background:#2F3E85"></i>기초대사량</span>
-        <span><i style="background:#E8A33D"></i>목표 섭취량</span>
       </div>
       <div id="bmrChartWrap"></div>
       <div class="chart-xaxis"><span id="bmrFirst">-</span><span id="bmrLast">-</span></div>
     </div>
 
-    <div class="card">
+    <div class="card" id="bpCard">
       <p class="eyebrow">🩺 혈압 추이 <span class="chart-cap" id="bpCap"></span></p>
-      <div class="legend">
+      <div class="legend" id="bpLegend">
         <span><i style="background:var(--c-sys)"></i>수축기</span>
         <span><i style="background:var(--c-dia)"></i>이완기</span>
         <span style="color:var(--faint);font-weight:600">점선: 정상 기준 120/80</span>
       </div>
       <div id="bpChartWrap"></div>
-      <div class="chart-xaxis"><span id="bpFirst">-</span><span id="bpLast">-</span></div>
+      <div class="chart-xaxis" id="bpXaxis"><span id="bpFirst">-</span><span id="bpLast">-</span></div>
     </div>
   </div>
 
@@ -532,6 +552,7 @@ var KEY = "stride:data";
 var bodyMem = [];   // {date, weight, smm, fm, bmr, bpSys, bpDia}
 var logMem = [];    // {id, date, kind:'run'|'push'|'drink', km?, count?, drinkType?, glasses?}
 var goals = null;
+var drinkShowAll = false;
 var view = { y:2026, m:7 };
 var selectedDrinkType = null;
 
@@ -559,6 +580,13 @@ function defaultGoals(){ return null; }
    Claude chat preview: uses window.storage (Claude's artifact storage API).
    Real deployed site (GitHub Pages etc): window.storage doesn't exist there,
    so falls back to the browser's own localStorage, which persists normally. */
+function cleanupGhostEntries(){
+  var before = bodyMem.length;
+  bodyMem = bodyMem.filter(function(e){
+    return e.weight!=null || e.smm!=null || e.fm!=null || e.bmr!=null || e.bpSys!=null || e.bpDia!=null;
+  });
+  return before - bodyMem.length;
+}
 function load(){
   if(typeof window.storage!=="undefined"){
     window.storage.get(KEY,false).then(function(r){
@@ -567,7 +595,9 @@ function load(){
         bodyMem = parsed.body||[]; logMem = parsed.logs||[]; goals = parsed.goals||defaultGoals();
       }catch(e){ bodyMem=[]; logMem=[]; goals=defaultGoals(); }
       if(!bodyMem.length && !logMem.length) seed();
-      afterLoad("저장된 기록 불러옴 · 로그 "+logMem.length+"건");
+      var removed = cleanupGhostEntries();
+      afterLoad("저장된 기록 불러옴 · 로그 "+logMem.length+"건"+(removed?(" · 빈 기록 "+removed+"건 정리됨"):""));
+      if(removed) persist("빈 기록 "+removed+"건 정리됨");
     }).catch(function(){
       seed(); afterLoad("새 기록장을 시작합니다");
     });
@@ -578,7 +608,9 @@ function load(){
     var parsed = raw ? JSON.parse(raw) : {};
     bodyMem = parsed.body||[]; logMem = parsed.logs||[]; goals = parsed.goals||defaultGoals();
     if(!bodyMem.length && !logMem.length) seed();
-    afterLoad("이 브라우저에 저장된 기록 불러옴 · 로그 "+logMem.length+"건");
+    var removed2 = cleanupGhostEntries();
+    afterLoad("이 브라우저에 저장된 기록 불러옴 · 로그 "+logMem.length+"건"+(removed2?(" · 빈 기록 "+removed2+"건 정리됨"):""));
+    if(removed2) persist("빈 기록 "+removed2+"건 정리됨");
   }catch(e){
     seed(); afterLoad("새 기록장을 시작합니다");
   }
@@ -622,6 +654,8 @@ document.getElementById("saveVitals").addEventListener("click", function(){
   var d = curDate();
   var e = {date:d, weight:num("i_w"), smm:num("i_smm"), fm:num("i_fm"),
             bmr:num("i_bmr"), bpSys:num("i_sys"), bpDia:num("i_dia")};
+  var hasAnyValue = e.weight!=null || e.smm!=null || e.fm!=null || e.bmr!=null || e.bpSys!=null || e.bpDia!=null;
+  if(!hasAnyValue){ setStatus("입력한 값이 없어서 저장하지 않았습니다"); return; }
   bodyMem = bodyMem.filter(function(x){ return x.date!==d; });
   bodyMem.push(e);
   persist("아침 측정 저장 완료 · "+d);
@@ -662,9 +696,9 @@ document.querySelectorAll('.chip[data-quick]').forEach(function(btn){
 /* ---------- drink logs ---------- */
 function setDrinkType(t){
   selectedDrinkType = t;
-  var map = {"소주":"dtSoju","맥주":"dtBeer","소맥":"dtSomaek","기타":"dtEtc"};
-  var clsMap = {"소주":"sel-soju","맥주":"sel-beer","소맥":"sel-somaek","기타":"sel-etc"};
-  ["소주","맥주","소맥","기타"].forEach(function(k){
+  var map = {"소주":"dtSoju","맥주":"dtBeer","소맥":"dtSomaek","와인":"dtWine","위스키":"dtWhiskey","하이볼":"dtHighball","막걸리":"dtMakgeolli","기타":"dtEtc"};
+  var clsMap = {"소주":"sel-soju","맥주":"sel-beer","소맥":"sel-somaek","와인":"sel-wine","위스키":"sel-whiskey","하이볼":"sel-highball","막걸리":"sel-makgeolli","기타":"sel-etc"};
+  Object.keys(map).forEach(function(k){
     var el = document.getElementById(map[k]);
     el.className = "dtBtn" + (k===t ? " "+clsMap[k] : "");
   });
@@ -774,6 +808,7 @@ function renderCalendar(){
   var html = "";
   for(var i=0;i<startDow;i++){ html += '<div class="calcell blank"></div>'; }
   var anyEntry = false;
+  var runDayCount=0, pushDayCount=0, drinkDayCount=0;
   for(var d=1; d<=dim; d++){
     var ds = dstr(view.y,view.m,d);
     var dayLogs = logMem.filter(function(x){ return x.date===ds; });
@@ -782,6 +817,9 @@ function renderCalendar(){
     var hasDrink = dayLogs.some(function(x){ return x.kind==="drink"; });
     var hasBody = !!findBody(ds);
     if(dayLogs.length || hasBody) anyEntry = true;
+    if(hasRun) runDayCount++;
+    if(hasPush) pushDayCount++;
+    if(hasDrink) drinkDayCount++;
     var cls = "calcell";
     if(ds===TODAY_STR) cls += " today";
     if(hasBody) cls += " body-log";
@@ -792,7 +830,8 @@ function renderCalendar(){
     html += '<div class="'+cls+'" data-date="'+ds+'">'+d+'<div class="dots">'+dots+'</div></div>';
   }
   document.getElementById("calGrid").innerHTML = html;
-  document.getElementById("calEmptyNote").innerHTML = anyEntry ? "" :
+  document.getElementById("calEmptyNote").innerHTML = anyEntry ?
+    '<div class="calSummary">🏃 러닝 '+runDayCount+'일 · 💪 푸시업 '+pushDayCount+'일 · 🍺 음주 '+drinkDayCount+'일</div>' :
     '<div class="calempty">이번 달 기록이 아직 없습니다</div>';
   document.querySelectorAll(".calcell[data-date]").forEach(function(cell){
     cell.addEventListener("click", function(){
@@ -830,10 +869,10 @@ function renderMonthStats(){
     document.getElementById("sumDelta").textContent = (delta>=0?"+":"")+delta.toFixed(1)+"kg";
   } else { document.getElementById("sumDelta").textContent = "-"; }
 
-  var byType = {"소주":0,"맥주":0,"소맥":0,"기타":0};
+  var byType = {"소주":0,"맥주":0,"소맥":0,"와인":0,"위스키":0,"하이볼":0,"막걸리":0,"기타":0};
   drinks.forEach(function(x){ byType[x.drinkType] = (byType[x.drinkType]||0)+x.glasses; });
-  var colorMap = {"소주":"var(--soju)","맥주":"var(--beer)","소맥":"var(--somaek)","기타":"var(--etc)"};
-  var maxV = Math.max(1, byType["소주"], byType["맥주"], byType["소맥"], byType["기타"]);
+  var colorMap = {"소주":"var(--soju)","맥주":"var(--beer)","소맥":"var(--somaek)","와인":"var(--wine)","위스키":"var(--whiskey)","하이볼":"var(--highball)","막걸리":"var(--makgeolli)","기타":"var(--etc)"};
+  var maxV = Math.max(1, byType["소주"], byType["맥주"], byType["소맥"], byType["와인"], byType["위스키"], byType["하이볼"], byType["막걸리"], byType["기타"]);
 
   var etcByLabel = {};
   drinks.forEach(function(x){
@@ -844,29 +883,53 @@ function renderMonthStats(){
   });
   var etcLabels = Object.keys(etcByLabel);
 
+  var ALL_TYPES = ["소주","맥주","소맥","와인","위스키","하이볼","막걸리","기타"];
+  var consumedCount = ALL_TYPES.filter(function(k){ return byType[k]>0; }).length;
+
   var dbkHtml = "";
-  ["소주","맥주","소맥"].forEach(function(k){
-    var w = byType[k]>0 ? Math.max(6, (byType[k]/maxV)*100) : 0;
-    dbkHtml += '<div class="dbk-row"><span class="n">'+k+'</span>'+
-      '<span class="bar"><i style="width:'+w+'%;background:'+colorMap[k]+'"></i></span>'+
-      '<span class="v">'+byType[k]+'잔</span></div>';
-  });
-  var wEtc = byType["기타"]>0 ? Math.max(6, (byType["기타"]/maxV)*100) : 0;
-  if(etcLabels.length){
-    var etcListHtml = etcLabels.sort(function(a,b){ return etcByLabel[b]-etcByLabel[a]; }).map(function(lbl){
-      return '<div class="dbk-etc-item"><span>'+lbl+'</span><span>'+etcByLabel[lbl]+'잔</span></div>';
-    }).join("");
-    dbkHtml += '<details class="dbk-details"><summary class="dbk-row">'+
-      '<span class="n">기타<span class="dbk-arrow">›</span></span>'+
-      '<span class="bar"><i style="width:'+wEtc+'%;background:var(--etc)"></i></span>'+
-      '<span class="v">'+byType["기타"]+'잔</span></summary>'+
-      '<div class="dbk-etc-list">'+etcListHtml+'</div></details>';
+  if(consumedCount===0){
+    dbkHtml = '<div class="empty-note">이번 달 음주 기록이 없습니다</div>';
   } else {
-    dbkHtml += '<div class="dbk-row"><span class="n">기타</span>'+
-      '<span class="bar"><i style="width:'+wEtc+'%;background:var(--etc)"></i></span>'+
-      '<span class="v">'+byType["기타"]+'잔</span></div>';
+    var visible = ["소주","맥주","소맥","와인","위스키","하이볼","막걸리"].filter(function(k){
+      return drinkShowAll || byType[k]>0;
+    });
+    visible.forEach(function(k){
+      var w = byType[k]>0 ? Math.max(6, (byType[k]/maxV)*100) : 0;
+      dbkHtml += '<div class="dbk-row"><span class="n">'+k+'</span>'+
+        '<span class="bar"><i style="width:'+w+'%;background:'+colorMap[k]+'"></i></span>'+
+        '<span class="v">'+byType[k]+'잔</span></div>';
+    });
+    var showEtc = drinkShowAll || byType["기타"]>0;
+    if(showEtc){
+      var wEtc = byType["기타"]>0 ? Math.max(6, (byType["기타"]/maxV)*100) : 0;
+      if(etcLabels.length){
+        var etcListHtml = etcLabels.sort(function(a,b){ return etcByLabel[b]-etcByLabel[a]; }).map(function(lbl){
+          return '<div class="dbk-etc-item"><span>'+lbl+'</span><span>'+etcByLabel[lbl]+'잔</span></div>';
+        }).join("");
+        dbkHtml += '<details class="dbk-details"><summary class="dbk-row">'+
+          '<span class="n">기타<span class="dbk-arrow">›</span></span>'+
+          '<span class="bar"><i style="width:'+wEtc+'%;background:var(--etc)"></i></span>'+
+          '<span class="v">'+byType["기타"]+'잔</span></summary>'+
+          '<div class="dbk-etc-list">'+etcListHtml+'</div></details>';
+      } else {
+        dbkHtml += '<div class="dbk-row"><span class="n">기타</span>'+
+          '<span class="bar"><i style="width:'+wEtc+'%;background:var(--etc)"></i></span>'+
+          '<span class="v">'+byType["기타"]+'잔</span></div>';
+      }
+    }
+    if(consumedCount < 8){
+      dbkHtml += '<button type="button" class="dbk-toggle" id="dbkToggle">'+
+        (drinkShowAll ? "마신 것만 보기" : "전체 8종류 보기")+'</button>';
+    }
   }
   document.getElementById("drinkBreakdown").innerHTML = dbkHtml;
+  var toggleBtn = document.getElementById("dbkToggle");
+  if(toggleBtn){
+    toggleBtn.addEventListener("click", function(){
+      drinkShowAll = !drinkShowAll;
+      renderMonthStats();
+    });
+  }
 }
 
 /* ---------- render: bar charts ---------- */
@@ -901,6 +964,12 @@ function buildLineSvg(seriesList, dim, opts){
       var v = s.data[d-1];
       if(v!=null) pts.push([X(d),Y(v)]);
     }
+    if(s.fill && pts.length>1){
+      var baseline = H-PB;
+      var areaPts = pts.map(function(p){ return p[0].toFixed(1)+","+p[1].toFixed(1); }).join(" ");
+      var areaPath = pts[0][0].toFixed(1)+","+baseline+" "+areaPts+" "+pts[pts.length-1][0].toFixed(1)+","+baseline;
+      svg += '<polygon points="'+areaPath+'" fill="'+s.color+'" fill-opacity="0.12" stroke="none"/>';
+    }
     if(pts.length>1){
       var path = pts.map(function(p){ return p[0].toFixed(1)+","+p[1].toFixed(1); }).join(" ");
       svg += '<polyline points="'+path+'" fill="none" stroke="'+s.color+'" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>';
@@ -913,8 +982,9 @@ function buildLineSvg(seriesList, dim, opts){
     }
   });
 
-  svg += '<text x="'+PL+'" y="'+(PT-2)+'" font-size="9.5" fill="#9AA7B2" font-family="ui-monospace,monospace" font-weight="700">'+hi.toFixed(1)+'</text>';
-  svg += '<text x="'+PL+'" y="'+(H-2)+'" font-size="9.5" fill="#9AA7B2" font-family="ui-monospace,monospace" font-weight="700">'+lo.toFixed(1)+'</text>';
+  var axisDec = opts.axisDecimals!=null ? opts.axisDecimals : 1;
+  svg += '<text x="'+PL+'" y="'+(PT-2)+'" font-size="9.5" fill="#9AA7B2" font-family="ui-monospace,monospace" font-weight="700">'+hi.toFixed(axisDec)+'</text>';
+  svg += '<text x="'+PL+'" y="'+(H-2)+'" font-size="9.5" fill="#9AA7B2" font-family="ui-monospace,monospace" font-weight="700">'+lo.toFixed(axisDec)+'</text>';
   svg += '</svg>';
   return svg;
 }
@@ -965,12 +1035,13 @@ function renderLineCharts(){
     {value:(goals.wLow+goals.wHigh)/2, color:"#00B295", label:"체중 목표"},
     {value:goals.muscle, color:"#4C5FD5", label:"근육 목표"}
   ] : [];
+  var hasBodyDataInView = wS.data.some(function(v){return v!=null;}) || sS.data.some(function(v){return v!=null;}) || fS.data.some(function(v){return v!=null;});
   var bodySvg = buildLineSvg([
     {data:wS.data, color:"#00B295"},
-    {data:sS.data, color:"#4C5FD5"},
-    {data:fS.data, color:"#FF6B5B"}
+    {data:sS.data, color:"#4C5FD5", fill:true},
+    {data:fS.data, color:"#FF6B5B", fill:true}
   ], wS.dim, {targets:bodyTargets});
-  document.getElementById("bodyChartWrap").innerHTML = bodySvg || '<div class="empty-note">표시할 체성분 기록이 없습니다</div>';
+  document.getElementById("bodyChartWrap").innerHTML = hasBodyDataInView ? bodySvg : '<div class="empty-note">표시할 체성분 기록이 없습니다</div>';
   document.getElementById("bodyCap").textContent = wS.caption;
   document.getElementById("bodyFirst").textContent = wS.first;
   document.getElementById("bodyLast").textContent = wS.last;
@@ -978,8 +1049,14 @@ function renderLineCharts(){
   var bmrS = vitalsSeriesForKey("bmr", vitalsGran);
   var latestB = latestBody();
   var intakeTarget = (latestB && latestB.bmr!=null) ? Math.round(latestB.bmr*1.4) - 450 : null;
-  var bmrSvg = buildLineSvg([{data:bmrS.data, color:"#2F3E85"}], bmrS.dim,
-    {targets: intakeTarget!=null ? [{value:intakeTarget, color:"#E8A33D"}] : []});
+  var intakeRow = document.getElementById("intakeRow");
+  if(intakeTarget!=null){
+    intakeRow.style.display = "flex";
+    document.getElementById("intakeVal").innerHTML = intakeTarget+" kcal <span class=\"gsub\">("+latestB.date+" 기초대사량 기준)</span>";
+  } else {
+    intakeRow.style.display = "none";
+  }
+  var bmrSvg = buildLineSvg([{data:bmrS.data, color:"#2F3E85"}], bmrS.dim, {axisDecimals:0});
   document.getElementById("bmrChartWrap").innerHTML = bmrSvg || '<div class="empty-note">표시할 기초대사량 기록이 없습니다</div>';
   document.getElementById("bmrCap").textContent = bmrS.caption;
   document.getElementById("bmrFirst").textContent = bmrS.first;
@@ -987,14 +1064,17 @@ function renderLineCharts(){
 
   var sysS = vitalsSeriesForKey("bpSys", vitalsGran);
   var diaS = vitalsSeriesForKey("bpDia", vitalsGran);
+  var hasBpInView = sysS.data.some(function(v){return v!=null;}) || diaS.data.some(function(v){return v!=null;});
   var bpSvg = buildLineSvg([
     {data:sysS.data, color:"#6C4FF6"},
     {data:diaS.data, color:"#C9B8FE"}
-  ], sysS.dim, {targets:[
+  ], sysS.dim, {axisDecimals:0, targets:[
     {value:120, color:"#6C4FF6"},
     {value:80,  color:"#C9B8FE"}
   ]});
-  document.getElementById("bpChartWrap").innerHTML = bpSvg || '<div class="empty-note">표시할 혈압 기록이 없습니다</div>';
+  document.getElementById("bpChartWrap").innerHTML = hasBpInView ? bpSvg : '<div class="empty-note">이번 달 혈압 기록이 없습니다</div>';
+  document.getElementById("bpLegend").style.display = hasBpInView ? "flex" : "none";
+  document.getElementById("bpXaxis").style.display = hasBpInView ? "flex" : "none";
   document.getElementById("bpCap").textContent = sysS.caption;
   document.getElementById("bpFirst").textContent = sysS.first;
   document.getElementById("bpLast").textContent = sysS.last;
