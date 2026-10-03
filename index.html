@@ -45,6 +45,7 @@
   --c-weight:#00B295;
   --c-smm:#4C5FD5;
   --c-fm:#FF6B5B;
+  --c-fp:#9B59B6;
   --c-bmr:#2F3E85;
   --c-sys:#6C4FF6;
   --c-dia:#C9B8FE;
@@ -280,6 +281,10 @@ header::after{
 .tabbtn.on-run{background:#E7F2FA;border-color:var(--blue);color:var(--blue-dk);}
 .tabbtn.on-push{background:#FFF1E0;border-color:var(--orange);color:#B85E00;}
 .tabbtn.on-drink{background:var(--red-soft);border-color:var(--red);color:var(--red);}
+.tabbtn.on-w{background:#E3F6F2;border-color:var(--c-weight);color:#007A66;}
+.tabbtn.on-smm{background:#E9ECFB;border-color:var(--c-smm);color:#3443A8;}
+.tabbtn.on-fm{background:#FFEDEA;border-color:var(--c-fm);color:#D2402F;}
+.tabbtn.on-fp{background:#F3E9F8;border-color:var(--c-fp);color:#7A3E94;}
 .tabbtn.on-gran{background:var(--ink);border-color:var(--ink);color:#fff;}
 
 .chart-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
@@ -428,9 +433,7 @@ footer{padding:18px 20px 4px;font-family:var(--mono);font-size:10px;color:var(--
         <div class="f"><label>체중 kg</label><input type="number" step="0.1" id="i_w"></div>
         <div class="f"><label>골격근량 kg</label><input type="number" step="0.1" id="i_smm"></div>
         <div class="f"><label>체지방량 kg</label><input type="number" step="0.1" id="i_fm"></div>
-        <div class="f"><label>기초대사량 kcal</label><input type="number" id="i_bmr"></div>
-        <div class="f"><label>혈압 수축기</label><input type="number" id="i_sys"></div>
-        <div class="f"><label>혈압 이완기</label><input type="number" id="i_dia"></div>
+        <div class="f"><label>체지방률 %</label><input type="number" step="0.1" id="i_fp"></div>
       </div>
       <button class="saveBtn" id="saveVitals">아침 측정 저장</button>
     </div>
@@ -503,37 +506,15 @@ footer{padding:18px 20px 4px;font-family:var(--mono);font-size:10px;color:var(--
 
     <div class="card">
       <p class="eyebrow">⚖️ 체성분 추이 <span class="chart-cap" id="bodyCap"></span></p>
-      <div class="legend">
-        <span><i style="background:var(--c-weight)"></i>체중</span>
-        <span><i style="background:var(--c-smm)"></i>골격근량</span>
-        <span><i style="background:var(--c-fm)"></i>체지방량</span>
+      <div class="tabrow sub" id="bodyMetricTabs">
+        <button type="button" class="tabbtn" data-bm="weight">체중</button>
+        <button type="button" class="tabbtn" data-bm="smm">골격근량</button>
+        <button type="button" class="tabbtn" data-bm="fm">체지방량</button>
+        <button type="button" class="tabbtn" data-bm="fatPct">체지방률</button>
       </div>
+      <div class="legend" id="bodyLegend" style="margin-top:12px"></div>
       <div id="bodyChartWrap"></div>
       <div class="chart-xaxis"><span id="bodyFirst">-</span><span id="bodyLast">-</span></div>
-    </div>
-
-    <div class="card">
-      <p class="eyebrow">🔥 기초대사량 추이 <span class="chart-cap" id="bmrCap"></span></p>
-      <div class="goalrow" id="intakeRow" style="display:none;border-bottom:none;">
-        <div class="gi">🎯</div>
-        <div class="gtxt"><div class="glabel" style="margin-left:3px;color:var(--faint);">목표 체중 달성을 위해 넘지 않아야 할 하루 섭취량</div><div class="gval" id="intakeVal">-</div></div>
-      </div>
-      <div class="legend">
-        <span><i style="background:#2F3E85"></i>기초대사량</span>
-      </div>
-      <div id="bmrChartWrap"></div>
-      <div class="chart-xaxis"><span id="bmrFirst">-</span><span id="bmrLast">-</span></div>
-    </div>
-
-    <div class="card" id="bpCard">
-      <p class="eyebrow">🩺 혈압 추이 <span class="chart-cap" id="bpCap"></span></p>
-      <div class="legend" id="bpLegend">
-        <span><i style="background:var(--c-sys)"></i>수축기</span>
-        <span><i style="background:var(--c-dia)"></i>이완기</span>
-        <span style="color:var(--faint);font-weight:600">점선: 정상 기준 120/80</span>
-      </div>
-      <div id="bpChartWrap"></div>
-      <div class="chart-xaxis" id="bpXaxis"><span id="bpFirst">-</span><span id="bpLast">-</span></div>
     </div>
   </div>
 
@@ -549,7 +530,7 @@ footer{padding:18px 20px 4px;font-family:var(--mono);font-size:10px;color:var(--
 (function(){
 "use strict";
 var KEY = "stride:data";
-var bodyMem = [];   // {date, weight, smm, fm, bmr, bpSys, bpDia}
+var bodyMem = [];   // {date, weight, smm, fm, fatPct, (legacy: bmr, bpSys, bpDia)}
 var logMem = [];    // {id, date, kind:'run'|'push'|'drink', km?, count?, drinkType?, glasses?}
 var goals = null;
 var drinkShowAll = false;
@@ -583,7 +564,7 @@ function defaultGoals(){ return null; }
 function cleanupGhostEntries(){
   var before = bodyMem.length;
   bodyMem = bodyMem.filter(function(e){
-    return e.weight!=null || e.smm!=null || e.fm!=null || e.bmr!=null || e.bpSys!=null || e.bpDia!=null;
+    return e.weight!=null || e.smm!=null || e.fm!=null || e.fatPct!=null || e.bmr!=null || e.bpSys!=null || e.bpDia!=null;
   });
   return before - bodyMem.length;
 }
@@ -646,15 +627,14 @@ function loadVitalsForDate(d){
   document.getElementById("i_w").value = e && e.weight!=null ? e.weight : "";
   document.getElementById("i_smm").value = e && e.smm!=null ? e.smm : "";
   document.getElementById("i_fm").value = e && e.fm!=null ? e.fm : "";
-  document.getElementById("i_bmr").value = e && e.bmr!=null ? e.bmr : "";
-  document.getElementById("i_sys").value = e && e.bpSys!=null ? e.bpSys : "";
-  document.getElementById("i_dia").value = e && e.bpDia!=null ? e.bpDia : "";
+  document.getElementById("i_fp").value = e && e.fatPct!=null ? e.fatPct : "";
 }
 document.getElementById("saveVitals").addEventListener("click", function(){
   var d = curDate();
-  var e = {date:d, weight:num("i_w"), smm:num("i_smm"), fm:num("i_fm"),
-            bmr:num("i_bmr"), bpSys:num("i_sys"), bpDia:num("i_dia")};
-  var hasAnyValue = e.weight!=null || e.smm!=null || e.fm!=null || e.bmr!=null || e.bpSys!=null || e.bpDia!=null;
+  var old = findBody(d) || {};
+  var e = {date:d, weight:num("i_w"), smm:num("i_smm"), fm:num("i_fm"), fatPct:num("i_fp"),
+            bmr:old.bmr!=null?old.bmr:null, bpSys:old.bpSys!=null?old.bpSys:null, bpDia:old.bpDia!=null?old.bpDia:null};
+  var hasAnyValue = e.weight!=null || e.smm!=null || e.fm!=null || e.fatPct!=null;
   if(!hasAnyValue){ setStatus("입력한 값이 없어서 저장하지 않았습니다"); return; }
   bodyMem = bodyMem.filter(function(x){ return x.date!==d; });
   bodyMem.push(e);
@@ -937,12 +917,17 @@ function renderMonthStats(){
 /* ---------- render: line charts (svg) ---------- */
 function buildLineSvg(seriesList, dim, opts){
   opts = opts || {};
-  var W=600,H=150,PL=8,PR=8,PT=14,PB=20;
+  var W=600,H=opts.showValues?170:150,PL=8,PR=8,PT=opts.showValues?30:14,PB=opts.showValues?26:20;
   var all=[];
   seriesList.forEach(function(s){ s.data.forEach(function(v){ if(v!=null) all.push(v); }); });
   var targets = opts.targets || (opts.target!=null ? [{value:opts.target,color:opts.targetColor,label:opts.targetLabel}] : []);
-  targets.forEach(function(t){ all.push(t.value); });
   if(!all.length){ return null; }
+  if(opts.clipTargets){
+    var dLo=Math.min.apply(null,all), dHi=Math.max.apply(null,all);
+    var span=Math.max(dHi-dLo,1);
+    targets = targets.filter(function(t){ return t.value>=dLo-span*0.25 && t.value<=dHi+span*0.25; });
+  }
+  targets.forEach(function(t){ all.push(t.value); });
   var lo=Math.min.apply(null,all), hi=Math.max.apply(null,all);
   if(lo===hi){ lo-=1; hi+=1; }
   var pad=(hi-lo)*0.12; lo-=pad; hi+=pad;
@@ -983,8 +968,27 @@ function buildLineSvg(seriesList, dim, opts){
   });
 
   var axisDec = opts.axisDecimals!=null ? opts.axisDecimals : 1;
+  if(opts.showValues){
+    var minGap = 42, lastX = null;
+    seriesList.forEach(function(s){
+      for(var d=dim; d>=1; d--){
+        var v = s.data[d-1];
+        if(v==null) continue;
+        var x = X(d), y = Y(v);
+        if(lastX!=null && Math.abs(lastX-x) < minGap) continue;
+        lastX = x;
+        var tx = Math.max(22, Math.min(W-22, x));
+        var ty = y - 9;
+        if(ty < 12) ty = y + 17;
+        var isLast = (lastX===x && d===dim) ;
+        svg += '<text x="'+tx.toFixed(1)+'" y="'+ty.toFixed(1)+'" text-anchor="middle" font-size="14" font-weight="800" fill="'+s.color+'" stroke="#fff" stroke-width="3.5" paint-order="stroke" stroke-linejoin="round" font-family="Pretendard,-apple-system,sans-serif">'+v.toFixed(axisDec)+'</text>';
+      }
+    });
+  }
+  if(!opts.showValues){
   svg += '<text x="'+PL+'" y="'+(PT-2)+'" font-size="9.5" fill="#9AA7B2" font-family="ui-monospace,monospace" font-weight="700">'+hi.toFixed(axisDec)+'</text>';
   svg += '<text x="'+PL+'" y="'+(H-2)+'" font-size="9.5" fill="#9AA7B2" font-family="ui-monospace,monospace" font-weight="700">'+lo.toFixed(axisDec)+'</text>';
+  }
   svg += '</svg>';
   return svg;
 }
@@ -1013,72 +1017,69 @@ function vitalsSeriesForKey(key, gran){
     var data = mb.map(function(b){ return avgBodyInMonth(key, b.y, b.m); });
     return {data:data, dim:6, first:mb[0].label, last:"이번달", caption:"최근 6개월 평균"};
   }
-  var dim = daysInMonth(view.y,view.m);
-  var data = [];
-  for(var d=1; d<=dim; d++){
-    var e=findBody(dstr(view.y,view.m,d));
+  var dim = 30;
+  var data = [], firstLabel = "";
+  for(var i=dim-1; i>=0; i--){
+    var dt = new Date(TODAY.y, TODAY.m, TODAY.d - i);
+    var ds = dstr(dt.getFullYear(), dt.getMonth(), dt.getDate());
+    if(i===dim-1) firstLabel = (dt.getMonth()+1)+"/"+dt.getDate();
+    var e = findBody(ds);
     data.push(e && e[key]!=null ? e[key] : null);
   }
-  return {data:data, dim:dim, first:"1일", last:dim+"일", caption:monthLabelStr(view.y,view.m)+" · 일별 측정값"};
+  return {data:data, dim:dim, first:firstLabel, last:"오늘", caption:"최근 30일 · 일별 측정값"};
 }
+
+var bodyMetric = "weight";
+var BODY_METRICS = {
+  weight: {label:"체중",     unit:"kg", color:"#00B295", cls:"on-w"},
+  smm:    {label:"골격근량", unit:"kg", color:"#4C5FD5", cls:"on-smm"},
+  fm:     {label:"체지방량", unit:"kg", color:"#FF6B5B", cls:"on-fm"},
+  fatPct: {label:"체지방률", unit:"%",  color:"#9B59B6", cls:"on-fp"}
+};
 
 function renderLineCharts(){
   document.querySelectorAll("#vitalsGranTabs .tabbtn").forEach(function(b){
     b.className = "tabbtn" + (b.dataset.vgran===vitalsGran ? " on-gran" : "");
   });
+  document.querySelectorAll("#bodyMetricTabs .tabbtn").forEach(function(b){
+    b.className = "tabbtn" + (b.dataset.bm===bodyMetric ? " "+BODY_METRICS[b.dataset.bm].cls : "");
+  });
 
-  var wS = vitalsSeriesForKey("weight", vitalsGran);
-  var sS = vitalsSeriesForKey("smm", vitalsGran);
-  var fS = vitalsSeriesForKey("fm", vitalsGran);
+  var cfg = BODY_METRICS[bodyMetric];
+  var ser = vitalsSeriesForKey(bodyMetric, vitalsGran);
 
-  var bodyTargets = goals ? [
-    {value:(goals.wLow+goals.wHigh)/2, color:"#00B295", label:"체중 목표"},
-    {value:goals.muscle, color:"#4C5FD5", label:"근육 목표"}
-  ] : [];
-  var hasBodyDataInView = wS.data.some(function(v){return v!=null;}) || sS.data.some(function(v){return v!=null;}) || fS.data.some(function(v){return v!=null;});
-  var bodySvg = buildLineSvg([
-    {data:wS.data, color:"#00B295"},
-    {data:sS.data, color:"#4C5FD5"},
-    {data:fS.data, color:"#FF6B5B"}
-  ], wS.dim, {targets:bodyTargets});
-  document.getElementById("bodyChartWrap").innerHTML = hasBodyDataInView ? bodySvg : '<div class="empty-note">표시할 체성분 기록이 없습니다</div>';
-  document.getElementById("bodyCap").textContent = wS.caption;
-  document.getElementById("bodyFirst").textContent = wS.first;
-  document.getElementById("bodyLast").textContent = wS.last;
-
-  var bmrS = vitalsSeriesForKey("bmr", vitalsGran);
-  var latestB = latestBody();
-  var intakeTarget = (latestB && latestB.bmr!=null) ? Math.round(latestB.bmr*1.4) - 450 : null;
-  var intakeRow = document.getElementById("intakeRow");
-  if(intakeTarget!=null){
-    intakeRow.style.display = "flex";
-    document.getElementById("intakeVal").innerHTML = intakeTarget+" kcal <span class=\"gsub\">("+latestB.date+" 기초대사량 기준)</span>";
-  } else {
-    intakeRow.style.display = "none";
+  var targets = [], goalNote = "";
+  if(goals && bodyMetric==="weight"){
+    targets = [{value:(goals.wLow+goals.wHigh)/2, color:"#00B295"}];
+    goalNote = "점선: 목표 "+goals.wLow+"~"+goals.wHigh+"kg";
+  } else if(goals && bodyMetric==="smm"){
+    targets = [{value:goals.muscle, color:"#4C5FD5"}];
+    goalNote = "점선: 목표 "+goals.muscle+"kg 이상";
   }
-  var bmrSvg = buildLineSvg([{data:bmrS.data, color:"#2F3E85"}], bmrS.dim, {axisDecimals:0});
-  document.getElementById("bmrChartWrap").innerHTML = bmrSvg || '<div class="empty-note">표시할 기초대사량 기록이 없습니다</div>';
-  document.getElementById("bmrCap").textContent = bmrS.caption;
-  document.getElementById("bmrFirst").textContent = bmrS.first;
-  document.getElementById("bmrLast").textContent = bmrS.last;
 
-  var sysS = vitalsSeriesForKey("bpSys", vitalsGran);
-  var diaS = vitalsSeriesForKey("bpDia", vitalsGran);
-  var hasBpInView = sysS.data.some(function(v){return v!=null;}) || diaS.data.some(function(v){return v!=null;});
-  var bpSvg = buildLineSvg([
-    {data:sysS.data, color:"#6C4FF6"},
-    {data:diaS.data, color:"#C9B8FE"}
-  ], sysS.dim, {axisDecimals:0, targets:[
-    {value:120, color:"#6C4FF6"},
-    {value:80,  color:"#C9B8FE"}
-  ]});
-  document.getElementById("bpChartWrap").innerHTML = hasBpInView ? bpSvg : '<div class="empty-note">이번 달 혈압 기록이 없습니다</div>';
-  document.getElementById("bpLegend").style.display = hasBpInView ? "flex" : "none";
-  document.getElementById("bpXaxis").style.display = hasBpInView ? "flex" : "none";
-  document.getElementById("bpCap").textContent = sysS.caption;
-  document.getElementById("bpFirst").textContent = sysS.first;
-  document.getElementById("bpLast").textContent = sysS.last;
+  var vals = ser.data.filter(function(v){ return v!=null; });
+  var svg = buildLineSvg([{data:ser.data, color:cfg.color}], ser.dim, {targets:targets, clipTargets:true, showValues:true});
+
+  var legendHtml = '<span><i style="background:'+cfg.color+'"></i>'+cfg.label+'</span>';
+  if(vals.length){
+    var latestV = vals[vals.length-1], firstV = vals[0];
+    legendHtml += '<span style="color:var(--ink)">최근 '+latestV.toFixed(1)+cfg.unit+'</span>';
+    if(vals.length>=2){
+      var dv = latestV-firstV;
+      legendHtml += '<span>기간 변화 '+(dv>=0?"+":"")+dv.toFixed(1)+cfg.unit+'</span>';
+    }
+  }
+  if(goalNote) legendHtml += '<span style="color:var(--faint);font-weight:600">'+goalNote+'</span>';
+  document.getElementById("bodyLegend").innerHTML = legendHtml;
+
+  document.getElementById("bodyChartWrap").innerHTML = svg || '<div class="empty-note">표시할 '+cfg.label+' 기록이 없습니다</div>';
+  document.getElementById("bodyCap").textContent = ser.caption;
+  document.getElementById("bodyFirst").textContent = ser.first;
+  document.getElementById("bodyLast").textContent = ser.last;
 }
+document.querySelectorAll("#bodyMetricTabs .tabbtn").forEach(function(b){
+  b.addEventListener("click", function(){ bodyMetric = b.dataset.bm; renderLineCharts(); });
+});
 document.querySelectorAll("#vitalsGranTabs .tabbtn").forEach(function(b){
   b.addEventListener("click", function(){ vitalsGran = b.dataset.vgran; renderLineCharts(); });
 });
