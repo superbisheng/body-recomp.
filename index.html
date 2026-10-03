@@ -480,7 +480,7 @@ footer{padding:18px 20px 4px;font-family:var(--mono);font-size:10px;color:var(--
         <div class="kpi"><div class="ic">🏃</div><div class="v" id="sumRun">-</div><div class="k">총 러닝 km</div></div>
         <div class="kpi"><div class="ic">💪</div><div class="v" id="sumPush">-</div><div class="k">총 푸시업</div></div>
         <div class="kpi"><div class="ic">🍺</div><div class="v" id="sumDrink">-</div><div class="k">총 음주 잔</div></div>
-        <div class="kpi"><div class="ic">⚖️</div><div class="v" id="sumDelta">-</div><div class="k">체중 변화</div></div>
+        <div class="kpi"><div class="ic">⚖️</div><div class="v" id="sumDelta">-</div><div class="k" id="sumDeltaLbl">체중 변화</div></div>
       </div>
     </div>
 
@@ -909,10 +909,22 @@ function renderMonthStats(){
   document.getElementById("sumDrink").textContent = drinks.length? totalDrink+"잔" : "-";
 
   var weights = monthBody().filter(function(e){return e.weight!=null;}).map(function(e){return e.weight;});
-  if(weights.length>=2){
-    var delta = weights[weights.length-1]-weights[0];
-    document.getElementById("sumDelta").textContent = (delta>=0?"+":"")+delta.toFixed(1)+"kg";
-  } else { document.getElementById("sumDelta").textContent = "-"; }
+  var monthStart = dstr(view.y, view.m, 1);
+  var prior = bodyMem.filter(function(e){ return e.weight!=null && e.date<monthStart; })
+                     .sort(function(a,b){ return a.date<b.date?1:-1; })[0];   // 직전 측정 (전월 마지막)
+  var deltaEl = document.getElementById("sumDelta"), deltaLbl = document.getElementById("sumDeltaLbl");
+  if(weights.length>=1 && prior){
+    var delta = weights[weights.length-1]-prior.weight;
+    deltaEl.textContent = (delta>=0?"+":"")+delta.toFixed(1)+"kg";
+    deltaLbl.textContent = "전월말 대비 체중";
+  } else if(weights.length>=2){
+    var delta2 = weights[weights.length-1]-weights[0];   // 이전 달 기록이 없을 때만 월초 기준
+    deltaEl.textContent = (delta2>=0?"+":"")+delta2.toFixed(1)+"kg";
+    deltaLbl.textContent = "월초 대비 체중";
+  } else {
+    deltaEl.textContent = "-";
+    deltaLbl.textContent = "체중 변화";
+  }
 
   var byType = {"소주":0,"맥주":0,"소맥":0,"와인":0,"위스키":0,"하이볼":0,"막걸리":0,"기타":0};
   drinks.forEach(function(x){ byType[x.drinkType] = (byType[x.drinkType]||0)+x.glasses; });
